@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -31,17 +32,18 @@ import java.util.List;
 public class UserServiceTests {
 
     @Container
+    @ServiceConnection
     public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:17.2")
             .withDatabaseName("test_db")
             .withUsername("user")
             .withPassword("password");
 
-    @DynamicPropertySource
-    public static void setDataSourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", () -> postgresContainer.getJdbcUrl());
-        registry.add("spring.datasource.username", () -> postgresContainer.getUsername());
-        registry.add("spring.datasource.password", () -> postgresContainer.getPassword());
-    }
+//    @DynamicPropertySource
+//    public static void setDataSourceProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url", () -> postgresContainer.getJdbcUrl());
+//        registry.add("spring.datasource.username", () -> postgresContainer.getUsername());
+//        registry.add("spring.datasource.password", () -> postgresContainer.getPassword());
+//    }
 
     @Autowired
     private UserService userService;
