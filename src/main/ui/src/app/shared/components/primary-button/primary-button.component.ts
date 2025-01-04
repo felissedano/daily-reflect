@@ -2,11 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-primary-button',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './primary-button.component.html',
-  styleUrl: './primary-button.component.scss'
+  styleUrl: './primary-button.component.scss',
 })
-export class PrimaryButtonComponent {
-
-}
+export class PrimaryButtonComponent {}
