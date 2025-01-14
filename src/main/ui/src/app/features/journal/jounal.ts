@@ -1,5 +1,5 @@
 export interface Jounal {
-        date: Date,
-        content: String,
-        tag: [String]
+  data: Date;
+  content: String;
+  tag: [String];
 }
