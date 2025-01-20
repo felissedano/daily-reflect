@@ -1,18 +1,15 @@
 package com.felissedano.dailyreflect;
 
-import com.felissedano.dailyreflect.models.User;
-import com.felissedano.dailyreflect.repositories.UserRepository;
-import com.felissedano.dailyreflect.services.UserService;
+import com.felissedano.dailyreflect.auth.User;
+import com.felissedano.dailyreflect.auth.UserRepository;
+import com.felissedano.dailyreflect.auth.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;

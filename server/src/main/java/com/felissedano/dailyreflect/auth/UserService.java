@@ -1,7 +1,5 @@
-package com.felissedano.dailyreflect.services;
+package com.felissedano.dailyreflect.auth;
 
-import com.felissedano.dailyreflect.models.User;
-import com.felissedano.dailyreflect.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

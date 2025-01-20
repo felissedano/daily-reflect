@@ -1,6 +1,5 @@
-package com.felissedano.dailyreflect.repositories;
+package com.felissedano.dailyreflect.auth;
 
-import com.felissedano.dailyreflect.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
