@@ -14,11 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "username", nullable = false)
+    private String username;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+//    @Column(name = "password", nullable = false)
+//    private String password;
 
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -33,8 +36,8 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email) {
-        this.name = name;
+    public User(String username, String email) {
+        this.username = username;
         this.email = email;
     }
 
@@ -42,16 +45,16 @@ public class User {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setEmail(String email) {

@@ -1,14 +1,14 @@
-package com.felissedano.dailyreflect;
+package com.felissedano.dailyreflect.auth;
 
-import com.felissedano.dailyreflect.auth.User;
-import com.felissedano.dailyreflect.auth.UserRepository;
-import com.felissedano.dailyreflect.auth.UserService;
+import com.felissedano.dailyreflect.DailyReflectApplication;
+import com.felissedano.dailyreflect.TestContainerConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,21 +19,22 @@ import java.util.List;
 
 
 @Testcontainers
+@Import(TestContainerConfiguration.class)
 @SpringBootTest(
         classes = DailyReflectApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@TestPropertySource(locations = "classpath:application-test.properties")
+//@TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserServiceTests {
 
-    @Container
-    @ServiceConnection
-    public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:17.2")
-            .withDatabaseName("test_db")
-            .withUsername("user")
-            .withPassword("password");
+//    @Container
+//    @ServiceConnection
+//    public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:17.2")
+//            .withDatabaseName("test_db")
+//            .withUsername("user")
+//            .withPassword("password");
 
 //    @DynamicPropertySource
 //    public static void setDataSourceProperties(DynamicPropertyRegistry registry) {
@@ -66,7 +67,7 @@ public class UserServiceTests {
 
         List<User> users = userService.findAll();
         assertEquals(1, users.size());
-        assertEquals("John Doe", users.getFirst().getName());
+        assertEquals("John Doe", users.getFirst().getUsername());
     }
 
 }
