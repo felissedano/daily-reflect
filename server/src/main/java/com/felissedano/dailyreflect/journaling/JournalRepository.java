@@ -1,6 +1,5 @@
-package com.felissedano.dailyreflect.repositories;
+package com.felissedano.dailyreflect.journaling;
 
-import com.felissedano.dailyreflect.models.Journal;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;

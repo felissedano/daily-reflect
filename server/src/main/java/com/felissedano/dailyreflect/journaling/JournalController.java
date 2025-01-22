@@ -1,7 +1,5 @@
-package com.felissedano.dailyreflect.controllers;
+package com.felissedano.dailyreflect.journaling;
 
-import com.felissedano.dailyreflect.models.Journal;
-import com.felissedano.dailyreflect.repositories.JournalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,9 @@ public class JournalController {
     }
 
     @GetMapping("date/{date}")
-    public ResponseEntity<Journal> getJournalByDate(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    public ResponseEntity<Journal> getJournalByDate(
+            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date
+    ) {
         Optional<Journal> journal = journalRepository.findByDate(date);
         return journal.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

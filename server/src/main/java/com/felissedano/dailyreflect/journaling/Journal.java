@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.models;
+package com.felissedano.dailyreflect.journaling;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;

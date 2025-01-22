@@ -1,6 +1,6 @@
 package com.felissedano.dailyreflect;
 
-import com.felissedano.dailyreflect.controllers.UserController;
+import com.felissedano.dailyreflect.auth.UserController;
 import com.felissedano.dailyreflect.auth.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
