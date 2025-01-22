@@ -26,9 +26,9 @@ public class UserAndRoleTests {
 
     @Test
     public void whenCreateNewUserWithAdminRole_UserShouldHaveUserAndRoleShouldIncludeAdmin() {
-        Role admin = new Role(RoleType.ADMIN);
+        Role admin = new Role(RoleType.ROLE_ADMIN);
         Role user = new Role(RoleType.USER);
-        User alice = new User("alice", "email");
+        User alice = new User("alice", "email", "password");
         HashSet<Role> adminAndUser = new HashSet<>(2);
         adminAndUser.add(admin);
         adminAndUser.add(user);

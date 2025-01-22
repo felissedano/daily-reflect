@@ -3,6 +3,7 @@ package com.felissedano.dailyreflect.auth;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -18,5 +19,9 @@ public class UserService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public Optional<User> findUserByEmail(String email) {
+        return  userRepository.findByEmail(email);
     }
 }

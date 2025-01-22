@@ -20,9 +20,16 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-//    @Column(name = "password", nullable = false)
-//    private String password;
+    @Column(name = "password", nullable = false)
+    private String password;
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -36,7 +43,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email) {
+    public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
     }
