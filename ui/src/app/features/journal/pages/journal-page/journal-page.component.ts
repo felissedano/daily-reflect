@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { ComponentsModule } from '../../../../shared/components/components.module';
+import { PrimaryButtonComponent } from '../../../../shared/components/primary-button/primary-button.component';
+
 @Component({
   selector: 'app-journal-page',
   standalone: true,
-  imports: [ComponentsModule],
+  imports: [PrimaryButtonComponent],
   templateUrl: './journal-page.component.html',
   styleUrl: './journal-page.component.scss',
 })

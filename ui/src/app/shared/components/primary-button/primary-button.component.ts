@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-primary-button',
-  standalone: false,
+  standalone: true,
   templateUrl: './primary-button.component.html',
   styleUrl: './primary-button.component.scss',
 })
