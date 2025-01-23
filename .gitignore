@@ -34,4 +34,3 @@ build/
 
 ### env file ###
 .env
-application.properties
