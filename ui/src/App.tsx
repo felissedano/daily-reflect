@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import JournalPage from "./features/Journaling/JournalPage.tsx";
-import AuthPage from "./core/auth/AuthPage.tsx";
+import Login from "./core/auth/pages/Login.tsx";
 
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
                     <Route path={"/home"} element={<JournalPage/>}/>
 
                     <Route path={"auth"}>
-                        <Route path={"login"} element={<AuthPage/>}/>
+                        <Route path={"login"} element={<Login/>}/>
                     </Route>
                 </Routes>
             </BrowserRouter>
