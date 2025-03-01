@@ -11,7 +11,7 @@
 	<groupId>com.felissedano</groupId>
 	<artifactId>daily-reflect</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>daily-reflect</name>
 	<description>Daily self-reflection journal</description>
 	<url/>
@@ -42,6 +42,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>3.4.3</version>
 		</dependency>
 
 		<dependency>
@@ -74,7 +79,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>1.20.4</version>
+			<version>1.20.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
