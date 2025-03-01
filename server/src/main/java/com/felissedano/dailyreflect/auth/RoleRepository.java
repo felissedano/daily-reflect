@@ -1,6 +1,8 @@
 package com.felissedano.dailyreflect.auth;
 
 
+import com.felissedano.dailyreflect.auth.models.Role;
+import com.felissedano.dailyreflect.auth.models.enums.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

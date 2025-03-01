@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.models;
 
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;

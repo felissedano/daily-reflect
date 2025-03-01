@@ -2,17 +2,15 @@ package com.felissedano.dailyreflect.auth;
 
 import com.felissedano.dailyreflect.DailyReflectApplication;
 import com.felissedano.dailyreflect.TestContainerConfiguration;
+import com.felissedano.dailyreflect.auth.models.User;
+import com.felissedano.dailyreflect.auth.services.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
@@ -62,7 +60,7 @@ public class UserServiceTests {
 
     @Test
     public void testSaveUser() {
-        User user = new User("John Doe", "john.doe@example.com");
+        User user = new User("John Doe", "john.doe@example.com", "password");
         userService.save(user);
 
         List<User> users = userService.findAll();

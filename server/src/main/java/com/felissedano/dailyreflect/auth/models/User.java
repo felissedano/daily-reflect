@@ -1,6 +1,7 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Set;
@@ -21,15 +22,10 @@ public class User {
     private String email;
 
     @Column(name = "password", nullable = false)
+    @Size(min = 8, max = 64)
     private String password;
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -40,12 +36,22 @@ public class User {
     )
     private Set<Role> roles;
 
-    public User() {
-    }
 
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
+        this.password = password;
+    }
+
+    public User(String username, String email, String password, Set<Role> roles) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User() {
+
     }
 
     public long getId() {
@@ -66,6 +72,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Set<Role> getRoles() {
