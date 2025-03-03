@@ -1,12 +1,10 @@
 import {Component, Input} from '@angular/core';
 import {MatCard} from "@angular/material/card";
-import {MatToolbar} from "@angular/material/toolbar";
 
 @Component({
   selector: 'app-auth-layout',
   imports: [
     MatCard,
-    MatToolbar
   ],
   template: `
     <div class="auth-container"  >
