@@ -19,6 +19,10 @@ public class Role {
         this.name = name;
     }
 
+    public Role() {
+
+    }
+
     public long getId() {
         return id;
     }

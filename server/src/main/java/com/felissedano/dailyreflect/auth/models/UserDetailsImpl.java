@@ -12,14 +12,16 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails, CredentialsContainer {
 
     String email;
-    String password;
+    String password; //Encrypted password
     Set<GrantedAuthority> grantedAuthorities;
+    boolean isEnabled;
 
     public UserDetailsImpl(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
         grantedAuthorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toSet());
+        this.isEnabled = user.isEnabled();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class UserDetailsImpl implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isEnabled;
     }
 
     @Override

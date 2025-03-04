@@ -1,10 +1,13 @@
 package com.felissedano.dailyreflect.auth.services;
 
+import com.felissedano.dailyreflect.auth.RoleRepository;
 import com.felissedano.dailyreflect.auth.dtos.UserDto;
 import com.felissedano.dailyreflect.auth.UserRepository;
 import com.felissedano.dailyreflect.auth.models.Role;
 import com.felissedano.dailyreflect.auth.models.User;
 import com.felissedano.dailyreflect.auth.models.enums.RoleType;
+import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -15,9 +18,13 @@ import java.util.Set;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll() {
@@ -33,12 +40,17 @@ public class UserService {
     }
 
     public Boolean checkIfUserNotExists(UserDto userDto) {
-        return !userRepository.existsByEmail(userDto.getEmail()) && !userRepository.existsByUsername(userDto.getEmail());
+        return !userRepository.existsByEmail(userDto.email()) && !userRepository.existsByUsername(userDto.email());
     }
 
-    public User registerNormalUser(UserDto userDto, String encryptedPassword) {
+    @Transactional
+    public User registerNormalUser(UserDto userDto) {
+        String encryptedPassword = passwordEncoder.encode(userDto.password());
         Set<Role> roles = new HashSet<>(1);
-        roles.add(new Role(RoleType.ROLE_USER));
-        return userRepository.save(new User(userDto.getUsername(),userDto.getEmail(),encryptedPassword, roles));
+        Role roleUser = roleRepository.findByName(RoleType.ROLE_USER).orElseThrow();
+        System.out.println(roleUser.getName());
+        roles.add(roleUser);
+
+        return userRepository.save(new User(userDto.username(),userDto.email(),encryptedPassword, roles));
     }
 }
