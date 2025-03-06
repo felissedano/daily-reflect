@@ -2,7 +2,6 @@ package com.felissedano.dailyreflect.auth.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -34,6 +33,12 @@ public class User {
 
     @Column(name = "email_verified_at", nullable = true)
     private Date emailVerifiedAt;
+
+    @Column(name = "verification_code", nullable = true)
+    private String verificationCode;
+
+    @Column(name = "code_expiration", nullable = true)
+    private Date codeExpiration;
 
 
 
@@ -123,5 +128,21 @@ public class User {
 
     public void setEmailVerifiedAt(Date emailVerifiedAt) {
         this.emailVerifiedAt = emailVerifiedAt;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Date getCodeExpiration() {
+        return codeExpiration;
+    }
+
+    public void setCodeExpiration(Date codeExpiration) {
+        this.codeExpiration = codeExpiration;
     }
 }

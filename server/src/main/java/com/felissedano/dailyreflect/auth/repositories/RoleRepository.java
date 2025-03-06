@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.repositories;
 
 
 import com.felissedano.dailyreflect.auth.models.Role;

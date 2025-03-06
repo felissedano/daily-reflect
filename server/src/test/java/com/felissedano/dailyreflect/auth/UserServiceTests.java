@@ -3,6 +3,7 @@ package com.felissedano.dailyreflect.auth;
 import com.felissedano.dailyreflect.DailyReflectApplication;
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.models.User;
+import com.felissedano.dailyreflect.auth.repositories.UserRepository;
 import com.felissedano.dailyreflect.auth.services.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

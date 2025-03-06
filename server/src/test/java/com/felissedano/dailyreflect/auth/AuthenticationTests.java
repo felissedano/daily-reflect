@@ -3,6 +3,7 @@ package com.felissedano.dailyreflect.auth;
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.dtos.UserDto;
 import com.felissedano.dailyreflect.auth.models.User;
+import com.felissedano.dailyreflect.auth.models.enums.VerificationState;
 import com.felissedano.dailyreflect.auth.services.UserService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -13,13 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.awt.*;
-
-import static org.assertj.core.api.Assertions.*;
 import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -74,23 +70,48 @@ public class AuthenticationTests {
                 .body(containsString("Email or password incorrect"));
     }
 
-    @Test void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked(){
+    @Test
+    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked(){
 
-        userService.registerNormalUser(new UserDto("john@example.com", "john", "password"));
-        var user = userService.findUserByEmail("john@example.com");
-        assertThat(user.isPresent());
-        System.out.println(user.get().getPassword());
+        userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password"));
 
         given()
                 .contentType(ContentType.JSON)
                 .body("""
                         {
-                        "email":  "john@example.com",
+                        "email":  "jane@example.com",
                         "password":  "password"
                         }
                         """)
                 .when().post("/api/auth/login")
                 .then().statusCode(423)
                 .body(containsString("Account is disabled"));
+    }
+
+    @Test
+    public void whenUserVerifyEmailWithCorrectCodeButDoItAgain_shouldSucceedAndThenFail() {
+        User user = userService.registerNormalUser(new UserDto("joe@example.com", "joe1", "password"));
+        String code = user.getVerificationCode();
+        when().post("api/auth/verify-email?email=joe@example.com&code="+code)
+                .then()
+                .body(containsString(VerificationState.VERIFICATION_SUCCESS.name()))
+                .statusCode(201);
+
+        when().post("api/auth/verify-email?email=joe@example.com&code="+code)
+                .then()
+                .body(containsString(VerificationState.ALREADY_VERIFIED.name()))
+                .statusCode(404);
+
+    }
+
+    @Test
+    public void whenUserVerifyEmailWithIncorrectCode_shouldFail() {
+        User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
+        String code = user.getVerificationCode();
+        when().post("api/auth/verify-email?email=eve@example.com&code="+code+"wrong")
+                .then()
+                .body(containsString(VerificationState.TOKEN_NOT_MATCH.name()))
+                .statusCode(404);
+
     }
 }

@@ -3,6 +3,8 @@ package com.felissedano.dailyreflect.auth;
 import com.felissedano.dailyreflect.auth.dtos.LoginDto;
 import com.felissedano.dailyreflect.auth.dtos.UserDto;
 import com.felissedano.dailyreflect.auth.models.User;
+import com.felissedano.dailyreflect.auth.models.enums.VerificationState;
+import com.felissedano.dailyreflect.auth.services.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -30,10 +33,17 @@ public class AuthController {
 
     final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserService userService) {
+    final EmailVerificationService emailVerificationService;
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          PasswordEncoder passwordEncoder,
+                          UserService userService,
+                          EmailVerificationService emailVerificationService
+    ) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
+        this.emailVerificationService = emailVerificationService;
     }
 
     @GetMapping("/user")
@@ -49,10 +59,10 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (BadCredentialsException ex) {
-           System.out.println("Bad Credentials");
+            System.out.println("Bad Credentials");
             return new ResponseEntity<>("Email or password incorrect", HttpStatusCode.valueOf(401));
         } catch (DisabledException ex) {
-            return new ResponseEntity<>("Account is disabled",HttpStatus.LOCKED);
+            return new ResponseEntity<>("Account is disabled", HttpStatus.LOCKED);
         } catch (Exception ex) {
             System.out.println("Some other exceptions.");
             return new ResponseEntity<>("Something went wrong", HttpStatusCode.valueOf(500));
@@ -64,7 +74,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Optional<User>> register(@RequestBody UserDto userDto) {
         if (userService.checkIfUserNotExists(userDto)) {
-            System.out.println("USER NOT EXISTS");
             User user = userService.registerNormalUser(userDto);
             return new ResponseEntity<>(Optional.of(user), HttpStatusCode.valueOf(201));
 
@@ -73,9 +82,25 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/resend-token")
-    public ResponseEntity<String> resendVerificationToken(@RequestParam String email) {
+    @PostMapping("/verify-email")
+    public ResponseEntity<VerificationState> verifyEmail(@RequestParam String email, @RequestParam String code) {
+        try {
+            VerificationState state = emailVerificationService.enableUser(email, code);
+            if (state == VerificationState.VERIFICATION_SUCCESS) {
+                return new ResponseEntity<>(state, HttpStatusCode.valueOf(201));
+            } else {
+                return new ResponseEntity<>(state, HttpStatusCode.valueOf(404));
+            }
+
+        } catch (IllegalStateException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<Boolean> resendVerificationToken(@RequestParam String email) {
         //TODO implement it
+        boolean isSend = emailVerificationService.resendVerificationEmail(email);
         return ResponseEntity.badRequest().build();
     }
 

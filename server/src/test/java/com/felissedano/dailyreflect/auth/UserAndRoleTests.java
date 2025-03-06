@@ -4,6 +4,7 @@ import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.models.Role;
 import com.felissedano.dailyreflect.auth.models.User;
 import com.felissedano.dailyreflect.auth.models.enums.RoleType;
+import com.felissedano.dailyreflect.auth.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

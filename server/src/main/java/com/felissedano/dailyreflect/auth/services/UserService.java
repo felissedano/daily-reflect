@@ -1,8 +1,8 @@
 package com.felissedano.dailyreflect.auth.services;
 
-import com.felissedano.dailyreflect.auth.RoleRepository;
+import com.felissedano.dailyreflect.auth.repositories.RoleRepository;
 import com.felissedano.dailyreflect.auth.dtos.UserDto;
-import com.felissedano.dailyreflect.auth.UserRepository;
+import com.felissedano.dailyreflect.auth.repositories.UserRepository;
 import com.felissedano.dailyreflect.auth.models.Role;
 import com.felissedano.dailyreflect.auth.models.User;
 import com.felissedano.dailyreflect.auth.models.enums.RoleType;
@@ -10,21 +10,20 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationService emailVerificationService;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailVerificationService = emailVerificationService;
     }
 
     public List<User> findAll() {
@@ -51,6 +50,28 @@ public class UserService {
         System.out.println(roleUser.getName());
         roles.add(roleUser);
 
-        return userRepository.save(new User(userDto.username(),userDto.email(),encryptedPassword, roles));
+        User newUser = new User(userDto.username(),userDto.email(),encryptedPassword, roles);
+
+        String verificationCode = UUID.randomUUID().toString();
+        newUser.setVerificationCode(verificationCode);
+        newUser.setCodeExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8));
+
+
+        //TODO MailSender send email
+        emailVerificationService.sendVerificationEmail(newUser.getEmail(), newUser.getUsername(), verificationCode);
+
+        return userRepository.save(newUser);
+    }
+
+
+    @Transactional
+    public boolean deleteUser(String email) {
+        Optional<User> userToDelete = userRepository.findByEmail(email);
+
+        if (userToDelete.isEmpty()) {
+            return  false;
+        }
+        userRepository.delete(userToDelete.get());
+        return true;
     }
 }
