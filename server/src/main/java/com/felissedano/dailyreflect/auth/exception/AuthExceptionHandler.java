@@ -7,28 +7,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.URI;
+import java.util.Locale;
 
 @RestControllerAdvice
 public class AuthExceptionHandler {
 
-    @ExceptionHandler(value = TokenExpiredException.class)
-    public ResponseEntity<ProblemDetail> handleAuthException(TokenExpiredException exception) {
-        ProblemDetail pd = ProblemDetail.forStatus(400);
-        pd.setTitle("Token Expired");
-        return new ResponseEntity<>(pd, HttpStatusCode.valueOf(404));
+    private final MessageSource messageSource;
+
+    public AuthExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(value = TokenNotMatchException.class)
-    public ResponseEntity<ProblemDetail> handleAuthException(TokenNotMatchException exception) {
+    @ExceptionHandler(value = TokenExpiredOrInvalidException.class)
+    public ResponseEntity<ProblemDetail> handleAuthException(TokenExpiredOrInvalidException exception, Locale locale) {
+        String detail = messageSource.getMessage("error.auth.token-expired-or-invalid", null, locale);
         ProblemDetail pd = ProblemDetail.forStatus(400);
-        pd.setTitle("Token Not Match");
-        return new ResponseEntity<>(pd, HttpStatusCode.valueOf(404));
+        pd.setTitle("Email Verification Failed");
+        pd.setDetail(detail);
+        pd.setType(URI.create("/problems/auth/token-expired-or-invalid"));
+        return new ResponseEntity<>(pd, HttpStatusCode.valueOf(400));
     }
 
-    @ExceptionHandler(value = AlreadyVerifiedException.class)
-    public ResponseEntity<ProblemDetail> handleAuthException(AlreadyVerifiedException exception) {
+
+    @ExceptionHandler(value = EmailAlreadyVerifiedException.class)
+    public ResponseEntity<ProblemDetail> handleAuthException(EmailAlreadyVerifiedException exception, Locale locale) {
+        String detail = messageSource.getMessage("error.auth.already-verified", null, locale);
         ProblemDetail pd = ProblemDetail.forStatus(400);
-        pd.setTitle("Already Verified");
-        return new ResponseEntity<>(pd, HttpStatusCode.valueOf(404));
+        pd.setTitle("Email Verification Failed");
+        pd.setDetail(detail);
+        pd.setType(URI.create("/problems/auth/already-verified"));
+        return new ResponseEntity<>(pd, HttpStatusCode.valueOf(400));
     }
 }

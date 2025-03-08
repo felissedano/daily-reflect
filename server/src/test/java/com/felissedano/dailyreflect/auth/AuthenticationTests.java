@@ -7,6 +7,7 @@ import com.felissedano.dailyreflect.auth.service.UserService;
 import com.felissedano.dailyreflect.auth.web.AuthController;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class AuthenticationTests {
     }
 
     @Test
-    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked(){
+    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked() {
 
         userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password"));
 
@@ -92,15 +93,16 @@ public class AuthenticationTests {
     public void whenUserVerifyEmailWithCorrectCodeButDoItAgain_shouldSucceedAndThenFail() {
         User user = userService.registerNormalUser(new UserDto("joe@example.com", "joe1", "password"));
         String code = user.getVerificationCode();
-        when().post("api/auth/verify-email?email=joe@example.com&code="+code)
+        when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
                 .then()
                 .body(containsString("Verification Success"))
                 .statusCode(201);
 
-        when().post("api/auth/verify-email?email=joe@example.com&code="+code)
+        when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
                 .then()
-                .body(containsString("Already Verified"))
-                .statusCode(404);
+                .body(containsString("Email Verification Failed"))
+                .body("type", containsString("/problems/auth/token-expired-or-invalid"))
+                .statusCode(400);
 
     }
 
@@ -108,10 +110,27 @@ public class AuthenticationTests {
     public void whenUserVerifyEmailWithIncorrectCode_shouldFail() {
         User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
         String code = user.getVerificationCode();
-        when().post("api/auth/verify-email?email=eve@example.com&code="+code+"wrong")
+        when().post("api/auth/verify-email?email=eve@example.com&code=" + code + "wrong")
                 .then()
-                .body(containsString("Token Not Match"))
-                .statusCode(404);
+                .body("type", containsString("/problems/auth/token-expired-or-invalid"))
+                .body(containsString("Email Verification Failed"))
+                .body(containsString("The token is expired or invalid"))
+                .statusCode(400);
+
+    }
+
+    @Test
+    public void whenUserVerifyEmailWithIncorrectCodeWithLocale_shouldFailWithLocalResponse() {
+        User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
+        String code = user.getVerificationCode();
+        given()
+                .header(new Header("Accept-Language", "fr"))
+                .when().post("api/auth/verify-email?email=eve@example.com&code=" + code + "wrong")
+                .then()
+                .body("type", containsString("/problems/auth/token-expired-or-invalid"))
+                .body("title", containsString("Email Verification Failed"))
+                .body("detail", containsString("Le jeton fourni ne correspond pas au jeton de notre base de données"))
+                .statusCode(400);
 
     }
 }

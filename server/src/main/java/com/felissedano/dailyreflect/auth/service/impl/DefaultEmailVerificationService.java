@@ -2,9 +2,8 @@ package com.felissedano.dailyreflect.auth.service.impl;
 
 import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import com.felissedano.dailyreflect.auth.domain.model.User;
-import com.felissedano.dailyreflect.auth.exception.AlreadyVerifiedException;
-import com.felissedano.dailyreflect.auth.exception.TokenExpiredException;
-import com.felissedano.dailyreflect.auth.exception.TokenNotMatchException;
+import com.felissedano.dailyreflect.auth.exception.EmailAlreadyVerifiedException;
+import com.felissedano.dailyreflect.auth.exception.TokenExpiredOrInvalidException;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import org.springframework.stereotype.Service;
 
@@ -43,30 +42,28 @@ public class DefaultEmailVerificationService implements EmailVerificationService
 
     @Override
     public boolean enableUser(String email, String verificationCode) {
+
         User user = userRepository.findByEmail(email).orElseThrow();
 
-        if (user.getVerificationCode() == null) {
-            if (user.isEnabled()) {
-                throw new AlreadyVerifiedException("User is already enabled");
-            } else {
-                // Some user not enabled but not verification email sent, could mean malicious activity or user account is disabled
-                throw new IllegalStateException("User not enabled and with no token");
-            }
-        }
-
-        if (user.getCodeExpiration().getTime() < new Date(System.currentTimeMillis()).getTime()) {
-            throw new TokenExpiredException("Token is expired");
-        }
-
         if (Objects.equals(user.getVerificationCode(), verificationCode)) {
+            if (user.getCodeExpiration().getTime() < new Date(System.currentTimeMillis()).getTime()) {
+                throw new TokenExpiredOrInvalidException("Email Validation Error");
+            }
+
+            if (user.getEmailVerifiedAt() != null) {
+                throw new EmailAlreadyVerifiedException("Email Validation Error");
+            }
+
             user.setEnabled(true);
             user.setVerificationCode(null);
             user.setEmailVerifiedAt(new Date(System.currentTimeMillis()));
             user.setCodeExpiration(null);
             userRepository.save(user);
             return true;
+        } else {
+            throw new TokenExpiredOrInvalidException("Email Validation Error");
         }
 
-        throw new TokenNotMatchException("The token does not match the record in our database");
     }
+
 }

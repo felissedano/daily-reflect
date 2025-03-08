@@ -1,7 +1,7 @@
 package com.felissedano.dailyreflect.auth.exception;
 
-public class TokenExpiredException extends RuntimeException {
-    public TokenExpiredException(String message) {
+public class TokenExpiredOrInvalidException extends RuntimeException {
+    public TokenExpiredOrInvalidException(String message) {
         super(message);
     }
 }

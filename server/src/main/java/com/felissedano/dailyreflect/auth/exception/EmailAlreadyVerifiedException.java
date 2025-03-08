@@ -1,7 +1,7 @@
 package com.felissedano.dailyreflect.auth.exception;
 
-public class AlreadyVerifiedException extends RuntimeException {
-    public AlreadyVerifiedException(String message) {
+public class EmailAlreadyVerifiedException extends RuntimeException {
+    public EmailAlreadyVerifiedException(String message) {
         super(message);
     }
 }
