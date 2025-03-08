@@ -1,7 +1,7 @@
-package com.felissedano.dailyreflect.auth.services;
+package com.felissedano.dailyreflect.auth.service;
 
-import com.felissedano.dailyreflect.auth.models.User;
-import com.felissedano.dailyreflect.auth.models.UserDetailsImpl;
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.domain.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

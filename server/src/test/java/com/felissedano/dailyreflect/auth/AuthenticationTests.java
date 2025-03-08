@@ -1,10 +1,10 @@
 package com.felissedano.dailyreflect.auth;
 
 import com.felissedano.dailyreflect.TestContainerConfiguration;
-import com.felissedano.dailyreflect.auth.dtos.UserDto;
-import com.felissedano.dailyreflect.auth.models.User;
-import com.felissedano.dailyreflect.auth.models.enums.VerificationState;
-import com.felissedano.dailyreflect.auth.services.UserService;
+import com.felissedano.dailyreflect.auth.service.dto.UserDto;
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.service.UserService;
+import com.felissedano.dailyreflect.auth.web.AuthController;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,12 +94,12 @@ public class AuthenticationTests {
         String code = user.getVerificationCode();
         when().post("api/auth/verify-email?email=joe@example.com&code="+code)
                 .then()
-                .body(containsString(VerificationState.VERIFICATION_SUCCESS.name()))
+                .body(containsString("Verification Success"))
                 .statusCode(201);
 
         when().post("api/auth/verify-email?email=joe@example.com&code="+code)
                 .then()
-                .body(containsString(VerificationState.ALREADY_VERIFIED.name()))
+                .body(containsString("Already Verified"))
                 .statusCode(404);
 
     }
@@ -110,7 +110,7 @@ public class AuthenticationTests {
         String code = user.getVerificationCode();
         when().post("api/auth/verify-email?email=eve@example.com&code="+code+"wrong")
                 .then()
-                .body(containsString(VerificationState.TOKEN_NOT_MATCH.name()))
+                .body(containsString("Token Not Match"))
                 .statusCode(404);
 
     }

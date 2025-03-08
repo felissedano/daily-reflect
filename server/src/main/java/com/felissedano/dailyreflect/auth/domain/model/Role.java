@@ -1,6 +1,6 @@
-package com.felissedano.dailyreflect.auth.models;
+package com.felissedano.dailyreflect.auth.domain.model;
 
-import com.felissedano.dailyreflect.auth.models.enums.RoleType;
+import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import jakarta.persistence.*;
 
 @Entity

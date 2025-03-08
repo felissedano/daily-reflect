@@ -1,10 +1,10 @@
 package com.felissedano.dailyreflect.auth;
 
 import com.felissedano.dailyreflect.TestContainerConfiguration;
-import com.felissedano.dailyreflect.auth.models.Role;
-import com.felissedano.dailyreflect.auth.models.User;
-import com.felissedano.dailyreflect.auth.models.enums.RoleType;
-import com.felissedano.dailyreflect.auth.repositories.UserRepository;
+import com.felissedano.dailyreflect.auth.domain.model.Role;
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
+import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,11 +1,10 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.web;
 
-import com.felissedano.dailyreflect.auth.dtos.LoginDto;
-import com.felissedano.dailyreflect.auth.dtos.UserDto;
-import com.felissedano.dailyreflect.auth.models.User;
-import com.felissedano.dailyreflect.auth.models.enums.VerificationState;
-import com.felissedano.dailyreflect.auth.services.EmailVerificationService;
-import com.felissedano.dailyreflect.auth.services.UserService;
+import com.felissedano.dailyreflect.auth.service.dto.LoginDto;
+import com.felissedano.dailyreflect.auth.service.dto.UserDto;
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
+import com.felissedano.dailyreflect.auth.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -83,14 +81,10 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<VerificationState> verifyEmail(@RequestParam String email, @RequestParam String code) {
+    public ResponseEntity<String> verifyEmail(@RequestParam String email, @RequestParam String code) {
         try {
-            VerificationState state = emailVerificationService.enableUser(email, code);
-            if (state == VerificationState.VERIFICATION_SUCCESS) {
-                return new ResponseEntity<>(state, HttpStatusCode.valueOf(201));
-            } else {
-                return new ResponseEntity<>(state, HttpStatusCode.valueOf(404));
-            }
+            emailVerificationService.enableUser(email, code);
+            return new ResponseEntity<>("Verification Success", HttpStatusCode.valueOf(201));
 
         } catch (IllegalStateException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

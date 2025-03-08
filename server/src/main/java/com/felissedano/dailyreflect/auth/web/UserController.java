@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.web;
 
 import org.springframework.web.bind.annotation.GetMapping;
 

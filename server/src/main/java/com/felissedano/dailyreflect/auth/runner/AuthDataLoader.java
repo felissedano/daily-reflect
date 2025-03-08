@@ -1,8 +1,8 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.runner;
 
-import com.felissedano.dailyreflect.auth.models.Role;
-import com.felissedano.dailyreflect.auth.models.enums.RoleType;
-import com.felissedano.dailyreflect.auth.repositories.RoleRepository;
+import com.felissedano.dailyreflect.auth.domain.model.Role;
+import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
+import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;

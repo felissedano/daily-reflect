@@ -1,11 +1,13 @@
-package com.felissedano.dailyreflect.auth.services;
+package com.felissedano.dailyreflect.auth.service.impl;
 
-import com.felissedano.dailyreflect.auth.repositories.RoleRepository;
-import com.felissedano.dailyreflect.auth.dtos.UserDto;
-import com.felissedano.dailyreflect.auth.repositories.UserRepository;
-import com.felissedano.dailyreflect.auth.models.Role;
-import com.felissedano.dailyreflect.auth.models.User;
-import com.felissedano.dailyreflect.auth.models.enums.RoleType;
+import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
+import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
+import com.felissedano.dailyreflect.auth.service.UserService;
+import com.felissedano.dailyreflect.auth.service.dto.UserDto;
+import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
+import com.felissedano.dailyreflect.auth.domain.model.Role;
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,36 +15,41 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class UserService {
+public class DefaultUserService implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationService emailVerificationService;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService) {
+    public DefaultUserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailVerificationService = emailVerificationService;
     }
 
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }
 
+    @Override
     public Optional<User> findUserByEmail(String email) {
         return  userRepository.findByEmail(email);
     }
 
+    @Override
     public Boolean checkIfUserNotExists(UserDto userDto) {
         return !userRepository.existsByEmail(userDto.email()) && !userRepository.existsByUsername(userDto.email());
     }
 
     @Transactional
+    @Override
     public User registerNormalUser(UserDto userDto) {
         String encryptedPassword = passwordEncoder.encode(userDto.password());
         Set<Role> roles = new HashSet<>(1);
@@ -65,6 +72,7 @@ public class UserService {
 
 
     @Transactional
+    @Override
     public boolean deleteUser(String email) {
         Optional<User> userToDelete = userRepository.findByEmail(email);
 

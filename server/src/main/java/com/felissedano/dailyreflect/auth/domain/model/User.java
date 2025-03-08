@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.auth.models;
+package com.felissedano.dailyreflect.auth.domain.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
