@@ -1,10 +1,14 @@
 package com.felissedano.dailyreflect.auth.web;
 
+import com.felissedano.dailyreflect.auth.service.PasswordService;
 import com.felissedano.dailyreflect.auth.service.dto.LoginDto;
+import com.felissedano.dailyreflect.auth.service.dto.PasswordResetDTO;
 import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -27,21 +31,24 @@ public class AuthController {
 
     final AuthenticationManager authenticationManager;
 
-    final PasswordEncoder passwordEncoder;
-
     final UserService userService;
 
     final EmailVerificationService emailVerificationService;
 
+    final PasswordService passwordService;
+
+    final MessageSource messageSource;
+
     public AuthController(AuthenticationManager authenticationManager,
                           PasswordEncoder passwordEncoder,
                           UserService userService,
-                          EmailVerificationService emailVerificationService
+                          EmailVerificationService emailVerificationService, PasswordService passwordService, MessageSource messageSource
     ) {
         this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.emailVerificationService = emailVerificationService;
+        this.passwordService = passwordService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/user")
@@ -51,7 +58,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDTO) {
-        //TODO gotta test if this actually works in case of credentials are wrong and/or user does not exists
         try {
             System.out.println("AUTHENTICATING");
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
@@ -67,6 +73,13 @@ public class AuthController {
         }
 
         return ResponseEntity.ok("Login Successful");
+    }
+
+    //TODO: maybe move this endpoint to UserController as user need to login to logout
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logout Successful");
     }
 
     @PostMapping("/register")
@@ -91,11 +104,34 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/verify-email")
-    public ResponseEntity<Boolean> resendVerificationToken(@RequestParam String email) {
+    @GetMapping("/get-verification-token")
+    public ResponseEntity<String> resendVerificationToken(@RequestParam String email) {
         //TODO implement it
         boolean isSend = emailVerificationService.resendVerificationEmail(email);
+        if (isSend) {
+            String message = messageSource.getMessage("auth.email.resend-token-success",null, LocaleContextHolder.getLocale());
+            return new ResponseEntity<>(message, HttpStatus.valueOf(201));
+        }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/get-reset-password-link")
+    public ResponseEntity<String> sendResetPasswordEmail(@RequestParam String email) {
+
+        if (passwordService.sendResetPasswordEmail(email)) {
+            String message = messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
+            return new ResponseEntity<>(message, HttpStatusCode.valueOf(201));
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO passwordResetDTO) {
+       passwordService.resetPassword(passwordResetDTO);
+       String message = messageSource.getMessage("auth.password.reset-success", null, LocaleContextHolder.getLocale());
+
+       return new ResponseEntity<>(message, HttpStatus.valueOf(201));
     }
 
 

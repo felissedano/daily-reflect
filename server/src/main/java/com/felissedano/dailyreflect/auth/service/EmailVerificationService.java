@@ -5,5 +5,5 @@ public interface EmailVerificationService {
 
     boolean resendVerificationEmail(String email);
 
-    boolean enableUser(String email, String verificationCode);
+    void enableUser(String email, String verificationCode);
 }

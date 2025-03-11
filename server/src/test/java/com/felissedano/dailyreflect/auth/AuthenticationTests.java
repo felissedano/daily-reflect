@@ -5,9 +5,13 @@ import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.UserService;
 import com.felissedano.dailyreflect.auth.web.AuthController;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +38,19 @@ public class AuthenticationTests {
     @Autowired
     UserService userService;
 
+    static GreenMail greenMail = new GreenMail(ServerSetup.SMTP.port(3025))
+            .withConfiguration(new GreenMailConfiguration().withUser("admin@example.com", "password"));
+
+
     @BeforeEach
     public void setup() {
         RestAssured.port = this.serverPort;
+        greenMail.start();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        greenMail.stop();
     }
 
     @Test
@@ -121,11 +135,11 @@ public class AuthenticationTests {
 
     @Test
     public void whenUserVerifyEmailWithIncorrectCodeWithLocale_shouldFailWithLocalResponse() {
-        User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
+        User user = userService.registerNormalUser(new UserDto("bob@example.com", "bob1", "password"));
         String code = user.getVerificationCode();
         given()
                 .header(new Header("Accept-Language", "fr"))
-                .when().post("api/auth/verify-email?email=eve@example.com&code=" + code + "wrong")
+                .when().post("api/auth/verify-email?email=bob@example.com&code=" + code + "wrong")
                 .then()
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
                 .body("title", containsString("Email Verification Failed"))

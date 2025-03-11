@@ -1,7 +1,9 @@
-package com.felissedano.dailyreflect.auth.service;
+package com.felissedano.dailyreflect.auth.service.impl;
 
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.domain.model.UserDetailsImpl;
+import com.felissedano.dailyreflect.auth.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     UserService userService;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userService.findUserByEmail(email);
         return new UserDetailsImpl(user.orElseThrow(() -> new UsernameNotFoundException(

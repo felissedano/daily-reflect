@@ -1,6 +1,6 @@
 package com.felissedano.dailyreflect.auth.config;
 
-import com.felissedano.dailyreflect.auth.service.UserDetailsServiceImpl;
+import com.felissedano.dailyreflect.auth.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

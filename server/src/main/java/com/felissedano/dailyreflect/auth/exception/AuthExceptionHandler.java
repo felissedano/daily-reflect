@@ -1,6 +1,7 @@
 package com.felissedano.dailyreflect.auth.exception;
 
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -39,4 +40,11 @@ public class AuthExceptionHandler {
         pd.setType(URI.create("/problems/auth/already-verified"));
         return new ResponseEntity<>(pd, HttpStatusCode.valueOf(400));
     }
+
+    @ExceptionHandler(value = BadEmailVerificationRequestException.class)
+    public ResponseEntity<String> handleBadEmailVerificationRequestException(BadEmailVerificationRequestException exception, Locale locale) {
+        return new ResponseEntity<>("Email already verified or user not exists", HttpStatus.BAD_REQUEST);
+
+    }
+
 }
