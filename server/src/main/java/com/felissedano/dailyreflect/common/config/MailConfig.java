@@ -45,7 +45,7 @@ public class MailConfig {
         public void send(MimeMessage... mimeMessages) throws MailException {
             for (MimeMessage mimeMessage : mimeMessages) {
                 try {
-                    System.out.println(STR."\nMimeMessage email -> \nSubject: \{mimeMessage.getSubject()} \nContent : \{mimeMessage.getContent()}\n");
+                    System.out.println("\nMimeMessage email -> \nSubject: " + mimeMessage.getSubject() + "\nContent : " + mimeMessage.getContent() + "\n");
                 } catch (MessagingException e) {
                     System.out.println("Some errors happened when try to print mimeMessage");
                 } catch (IOException e) {
@@ -57,7 +57,7 @@ public class MailConfig {
         @Override
         public void send(SimpleMailMessage... simpleMessages) throws MailException {
             for (SimpleMailMessage simpleMessage : simpleMessages) {
-                System.out.println(STR."\nSimpleMailMessage email -> \nSubject: \{simpleMessage.getSubject()} \nContent: \{simpleMessage.getText()}\n");
+                System.out.println("\nSimpleMailMessage email -> \nSubject:" + simpleMessage.getSubject() + "\nContent: " + simpleMessage.getText() + "\n");
             }
         }
     }
