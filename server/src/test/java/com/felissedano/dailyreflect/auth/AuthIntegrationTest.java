@@ -27,7 +27,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestContainerConfiguration.class)
 @ActiveProfiles("test")
-public class AuthenticationIT {
+public class AuthIntegrationTest {
 
     @LocalServerPort
     private Integer serverPort;
@@ -128,7 +128,7 @@ public class AuthenticationIT {
                 .then()
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
                 .body(containsString("Email Verification Failed"))
-                .body(containsString("The token is expired or invalid"))
+                .body(containsString("The link is expired or invalid"))
                 .statusCode(400);
 
     }
@@ -143,7 +143,7 @@ public class AuthenticationIT {
                 .then()
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
                 .body("title", containsString("Email Verification Failed"))
-                .body("detail", containsString("Le jeton fourni ne correspond pas au jeton de notre base de données"))
+                .body("detail", containsString("Le lien est expiré ou invalide"))
                 .statusCode(400);
 
     }

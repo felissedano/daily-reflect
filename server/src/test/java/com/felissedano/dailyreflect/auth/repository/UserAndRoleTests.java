@@ -1,4 +1,4 @@
-package com.felissedano.dailyreflect.auth;
+package com.felissedano.dailyreflect.auth.repository;
 
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.domain.model.Role;

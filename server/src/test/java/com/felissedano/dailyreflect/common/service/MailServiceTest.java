@@ -1,6 +1,5 @@
-package com.felissedano.dailyreflect;
+package com.felissedano.dailyreflect.common.service;
 
-import com.felissedano.dailyreflect.common.service.MailService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 public class MailServiceTest {
 
 
