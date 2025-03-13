@@ -27,6 +27,10 @@ jobs:
         java-version: '21'
         distribution: 'corretto'
         cache: maven
+        
+    - name: Setup .env file
+      run: cp .env.example .env
+      
     - name: Build with Maven
       run: mvn -B package --file ./server/pom.xml
 
