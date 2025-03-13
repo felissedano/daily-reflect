@@ -18,7 +18,7 @@ import java.util.HashSet;
 @Import(TestContainerConfiguration.class)
 //@TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
-public class UserAndRoleTests {
+public class UserAndRoleTest {
 
     @Autowired
     private UserRepository userRepository;
