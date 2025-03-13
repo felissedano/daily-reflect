@@ -22,7 +22,7 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(value = TokenExpiredOrInvalidException.class)
     public ResponseEntity<ProblemDetail> handleAuthException(TokenExpiredOrInvalidException exception, Locale locale) {
-        String detail = messageSource.getMessage("error.auth.token-expired-or-invalid", null, locale);
+        String detail = messageSource.getMessage("error.auth.link-expired-or-invalid", null, locale);
         ProblemDetail pd = ProblemDetail.forStatus(400);
         pd.setTitle("Email Verification Failed");
         pd.setDetail(detail);
@@ -45,6 +45,15 @@ public class AuthExceptionHandler {
     public ResponseEntity<String> handleBadEmailVerificationRequestException(BadEmailVerificationRequestException exception, Locale locale) {
         return new ResponseEntity<>("Email already verified or user not exists", HttpStatus.BAD_REQUEST);
 
+    }
+
+    @ExceptionHandler(value = SamePasswordException.class)
+    public ResponseEntity<ProblemDetail> handleSamePasswordException(SamePasswordException exception, Locale locale) {
+        String detail = messageSource.getMessage("error.auth.same-password", null, locale);
+        ProblemDetail pd = ProblemDetail.forStatus(400);
+        pd.setDetail("New Password Same As Old Password");
+        pd.setType(URI.create("/problems/auth/same-password"));
+        return new ResponseEntity<>(pd, HttpStatus.valueOf(400));
     }
 
 }

@@ -109,7 +109,7 @@ public class AuthController {
         //TODO implement it
         boolean isSend = emailVerificationService.resendVerificationEmail(email);
         if (isSend) {
-            String message = messageSource.getMessage("auth.email.resend-token-success",null, LocaleContextHolder.getLocale());
+            String message = messageSource.getMessage("auth.email.resend-token-success", null, LocaleContextHolder.getLocale());
             return new ResponseEntity<>(message, HttpStatus.valueOf(201));
         }
         return ResponseEntity.badRequest().build();
@@ -118,20 +118,19 @@ public class AuthController {
     @GetMapping("/get-reset-password-link")
     public ResponseEntity<String> sendResetPasswordEmail(@RequestParam String email) {
 
-        if (passwordService.sendResetPasswordEmail(email)) {
-            String message = messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
-            return new ResponseEntity<>(message, HttpStatusCode.valueOf(201));
-        }
+        passwordService.sendResetPasswordEmail(email);
+        String message = messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
+        return new ResponseEntity<>(message, HttpStatusCode.valueOf(201));
 
-        return ResponseEntity.badRequest().build();
+
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO passwordResetDTO) {
-       passwordService.resetPassword(passwordResetDTO);
-       String message = messageSource.getMessage("auth.password.reset-success", null, LocaleContextHolder.getLocale());
+        passwordService.resetPassword(passwordResetDTO);
+        String message = messageSource.getMessage("auth.password.reset-success", null, LocaleContextHolder.getLocale());
 
-       return new ResponseEntity<>(message, HttpStatus.valueOf(201));
+        return new ResponseEntity<>(message, HttpStatus.valueOf(201));
     }
 
 

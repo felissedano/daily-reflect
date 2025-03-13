@@ -5,9 +5,9 @@ import com.felissedano.dailyreflect.auth.service.dto.PasswordResetDTO;
 
 public interface PasswordService {
 
-    public boolean sendResetPasswordEmail(String email);
+    public void sendResetPasswordEmail(String email);
 
-    public boolean resetPassword(PasswordResetDTO passwordResetDTO);
+    public void resetPassword(PasswordResetDTO passwordResetDTO);
 
     public boolean changePassword(PasswordChangeDTO passwordChangeDTO);
 
