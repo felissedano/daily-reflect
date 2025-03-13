@@ -27,7 +27,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestContainerConfiguration.class)
 @ActiveProfiles("test")
-public class AuthenticationTests {
+public class AuthenticationIT {
 
     @LocalServerPort
     private Integer serverPort;
