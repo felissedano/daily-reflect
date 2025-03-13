@@ -1,5 +1,6 @@
 package com.felissedano.dailyreflect.common.service;
 
+import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -9,7 +10,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,8 +25,9 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.*;
 
 
-@ActiveProfiles("test")
 @SpringBootTest
+@ActiveProfiles("test")
+@Import(TestContainerConfiguration.class)
 public class MailServiceTest {
 
 
