@@ -5,5 +5,6 @@ import jakarta.annotation.Nullable;
 import java.util.Locale;
 
 public interface MailService {
-    boolean sendTextEmail(String to, String subject, String content, @Nullable Object [] args, Locale locale);
+
+    boolean sendLocaleTextEmail(String to, String subjectKey, String contentKey, @Nullable Object [] contentArgs);
 }

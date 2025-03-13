@@ -44,7 +44,7 @@ class DefaultPasswordServiceTest {
 
         // then
         verify(passwordResetTokenRepository, times(1)).save(any());
-        verify(mailService, times(1)).sendTextEmail(eq("john@example.com"),anyString(),anyString(),any(), notNull(Locale.class));
+        verify(mailService, times(1)).sendLocaleTextEmail(eq("john@example.com"),anyString(),anyString(),any());
     }
 
     @Test
@@ -58,7 +58,7 @@ class DefaultPasswordServiceTest {
 
         // then
         verify(passwordResetTokenRepository, never()).findByUserEmail(anyString());
-        verify(mailService, never()).sendTextEmail(any(),any(),any(),any(),any());
+        verify(mailService, never()).sendLocaleTextEmail(any(),any(),any(),any());
 
     }
 

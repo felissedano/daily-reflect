@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
@@ -71,7 +72,8 @@ public class MailServiceTest {
 
     @Test
     public void whenSendMessageOfAnotherLocaleWithEmailService_shouldReceiveWithCorrectLanguage() {
-        mailService.sendTextEmail("john@example.com", "general.greetings.hello", "general.hello-world", null, Locale.FRENCH);
+        LocaleContextHolder.setLocale(Locale.FRENCH);
+        mailService.sendLocaleTextEmail("john@example.com", "general.greetings.hello", "general.hello-world", null);
         MimeMessage received = greenMail.getReceivedMessages()[0];
         try {
             assertThat(received.getSubject()).contains("Bonjour");

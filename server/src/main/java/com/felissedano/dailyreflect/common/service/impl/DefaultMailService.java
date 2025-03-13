@@ -4,8 +4,8 @@ import com.felissedano.dailyreflect.common.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +23,10 @@ public class DefaultMailService implements MailService {
     }
 
     @Override
-    public boolean sendTextEmail(String to, String subject, String content, Object [] args, Locale locale) {
-        String title = messageSource.getMessage(subject, null, locale);
-        String message =  messageSource.getMessage(content, args, locale);
+    public boolean sendLocaleTextEmail(String to, String subjectKey, String contentKey, Object [] contentArgs) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String title = messageSource.getMessage(subjectKey, null, locale);
+        String message =  messageSource.getMessage(contentKey, contentArgs, locale);
         MimeMessage mailMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
         try {

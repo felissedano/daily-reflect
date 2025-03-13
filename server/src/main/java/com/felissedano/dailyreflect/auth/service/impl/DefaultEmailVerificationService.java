@@ -35,7 +35,7 @@ public class DefaultEmailVerificationService implements EmailVerificationService
     public boolean sendVerificationEmail(String email, String username, String code) {
         Locale locale = LocaleContextHolder.getLocale();
         Object[] args = {username, code};
-        return mailService.sendTextEmail(email, "auth.email.verify-with-link.subject", "auth.email.verify-with-link.content", args, locale);
+        return mailService.sendLocaleTextEmail(email, "auth.email.verify-with-link.subject", "auth.email.verify-with-link.content", args);
     }
 
     @Override

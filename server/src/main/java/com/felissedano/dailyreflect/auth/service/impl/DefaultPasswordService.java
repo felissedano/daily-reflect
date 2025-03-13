@@ -70,12 +70,12 @@ public class DefaultPasswordService implements PasswordService {
         log.info(locale.toString());
         System.out.println(locale);
 
-        mailService.sendTextEmail(
+        mailService.sendLocaleTextEmail(
                 email,
                 "auth.password.mail.reset-password.subject",
                 "auth.password.mail.reset-password.content",
-                new String[]{"https://www.example.com"},
-                locale);
+                new String[]{"https://www.example.com"}
+        );
     }
 
     @Override
