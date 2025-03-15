@@ -23,16 +23,6 @@ public class UserController {
     @GetMapping("user")
     @PreAuthorize("hasRole('ROLE_USER')")
     public String user(Authentication auth) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-//
-//        // Log the authentication details for debugging
-        if (authentication != null) {
-            System.out.println("Authenticated user: " + authentication.getName());
-            System.out.println("Authorities: " + authentication.getAuthorities());
-        } else {
-            System.out.println("No authentication found in SecurityContext");
-        }
        return "Hello " + auth.getName() + " with authorities: " + auth.getAuthorities();
     }
 

@@ -65,19 +65,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDTO) {
-        try {
-            System.out.println("AUTHENTICATING");
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (BadCredentialsException ex) {
-            System.out.println("Bad Credentials");
-            return new ResponseEntity<>("Email or password incorrect", HttpStatusCode.valueOf(401));
-        } catch (DisabledException ex) {
-            return new ResponseEntity<>("Account is disabled", HttpStatus.LOCKED);
-        } catch (Exception ex) {
-            System.out.println("Some other exceptions.");
-            return new ResponseEntity<>("Something went wrong", HttpStatusCode.valueOf(500));
-        }
+        System.out.println("AUTHENTICATING");
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new ResponseEntity<>("Login Successful", HttpStatusCode.valueOf(201));
     }

@@ -94,7 +94,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked() {
+    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowForbidden() {
 
         userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password"));
 
@@ -107,8 +107,8 @@ public class AuthIntegrationTest {
                         }
                         """)
                 .when().post("/api/auth/login")
-                .then().statusCode(423)
-                .body(containsString("Account is disabled"));
+                .then().statusCode(403)
+                .body(containsString("Account Not Enabled"));
     }
 
     @Test
