@@ -7,6 +7,9 @@ import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -19,8 +22,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
@@ -72,14 +79,14 @@ public class AuthController {
             return new ResponseEntity<>("Something went wrong", HttpStatusCode.valueOf(500));
         }
 
-        return ResponseEntity.ok("Login Successful");
+        return new ResponseEntity<>("Login Successful", HttpStatusCode.valueOf(201));
     }
 
     //TODO: maybe move this endpoint to UserController as user need to login to logout
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
     public ResponseEntity<String> logout() {
-        SecurityContextHolder.clearContext();
-        return ResponseEntity.ok("Logout Successful");
+//        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logout Successfullll");
     }
 
     @PostMapping("/register")
@@ -132,6 +139,5 @@ public class AuthController {
 
         return new ResponseEntity<>(message, HttpStatus.valueOf(201));
     }
-
 
 }

@@ -11,6 +11,9 @@ import com.icegreen.greenmail.util.ServerSetup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import io.restassured.http.Headers;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +23,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestContainerConfiguration.class)
@@ -146,6 +154,62 @@ public class AuthIntegrationTest {
                 .body("detail", containsString("Le lien est expiré ou invalide"))
                 .statusCode(400);
 
+    }
+
+    @Test
+    public void whenUserRegisterVerifyAndLogin_shouldSucceed() {
+        UserDto user = new UserDto("alice@example.com", "alice", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {
+                            "email": "alice@example.com",
+                            "username": "alice",
+                            "password": "password"
+                        }
+                        """)
+                .when().post("api/auth/register")
+                .then()
+                .statusCode(201);
+
+        List<MimeMessage> list = Arrays.stream(greenMail.getReceivedMessages()).filter(mimeMessage -> {
+            try {
+                return mimeMessage.getAllRecipients()[0].toString().equals("alice@example.com");
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
+
+        assertThat(list.size()).isEqualTo(1);
+
+        String verificationToken = userService.findUserByEmail("alice@example.com").orElseThrow().getVerificationCode();
+
+        // verify email
+        when().post("api/auth/verify-email?email=alice@example.com&code=" + verificationToken)
+                .then()
+                .body(containsString("Verification Success"))
+                .statusCode(201);
+
+        // login
+        var sessionId = given()
+                .contentType(ContentType.JSON).body("""
+                        {
+                          "email": "alice@example.com",
+                          "password": "password"
+                        }
+                        """)
+                .when().post("api/auth/login")
+                .then().statusCode(201).extract().sessionId();
+
+
+        // verify login is successful
+       given().sessionId(sessionId).when().get("api/user/hello").then().body(containsString("Hello World!"));
+
+       // logout
+        given().sessionId(sessionId).post("api/auth/logout").then().statusCode(200);
+
+        // verify cannot access secure endpoint
+        given().sessionId(sessionId).get("api/user/hello").then().statusCode(401);
     }
 
 }
