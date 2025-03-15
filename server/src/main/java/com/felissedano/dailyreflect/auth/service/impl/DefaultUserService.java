@@ -1,5 +1,6 @@
 package com.felissedano.dailyreflect.auth.service.impl;
 
+import com.felissedano.dailyreflect.auth.AuthUtils;
 import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
@@ -59,13 +60,13 @@ public class DefaultUserService implements UserService {
 
         User newUser = new User(userDto.username(),userDto.email(),encryptedPassword, roles);
 
-        String verificationCode = UUID.randomUUID().toString();
-        newUser.setVerificationCode(verificationCode);
-        newUser.setCodeExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8));
+        String verificationToken = AuthUtils.generateVerificationToken();
+        newUser.setVerificationCode(verificationToken);
+        newUser.setCodeExpiration(AuthUtils.generateTokenExpirationDate());
 
 
         //TODO MailSender send email
-        emailVerificationService.sendVerificationEmail(newUser.getEmail(), newUser.getUsername(), verificationCode);
+        emailVerificationService.sendVerificationEmail(newUser.getEmail(), newUser.getUsername(), verificationToken);
 
         return userRepository.save(newUser);
     }

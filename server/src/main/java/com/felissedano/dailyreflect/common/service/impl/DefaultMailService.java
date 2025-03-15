@@ -14,8 +14,8 @@ import java.util.Locale;
 @Service
 public class DefaultMailService implements MailService {
 
-    private JavaMailSender mailSender;
-    private MessageSource messageSource;
+    private final JavaMailSender mailSender;
+    private final MessageSource messageSource;
 
     public DefaultMailService(JavaMailSender mailSender, MessageSource messageSource) {
         this.mailSender = mailSender;
