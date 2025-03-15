@@ -1,5 +1,6 @@
 package com.felissedano.dailyreflect.auth.service.impl;
 
+import com.felissedano.dailyreflect.auth.AuthUtils;
 import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.exception.BadEmailVerificationRequestException;
@@ -45,9 +46,9 @@ public class DefaultEmailVerificationService implements EmailVerificationService
         if (user.getEmailVerifiedAt() != null) {
             throw new BadEmailVerificationRequestException("");
         }
-        String newCode = UUID.randomUUID().toString();
-        Date expiration = new Date(System.currentTimeMillis());
-        user.setVerificationCode(newCode);
+        String newToken = AuthUtils.generateVerificationToken();
+        Date expiration = AuthUtils.generateTokenExpirationDate();
+        user.setVerificationCode(newToken);
         user.setCodeExpiration(expiration);
         userRepository.save(user);
 
@@ -59,7 +60,6 @@ public class DefaultEmailVerificationService implements EmailVerificationService
     public void enableUser(String email, String verificationCode) {
 
         User user = userRepository.findByEmail(email).orElseThrow();
-
         if (Objects.equals(user.getVerificationCode(), verificationCode)) {
             if (new Date(System.currentTimeMillis()).after(user.getCodeExpiration())) {
                 throw new TokenExpiredOrInvalidException("Email Validation Error");
