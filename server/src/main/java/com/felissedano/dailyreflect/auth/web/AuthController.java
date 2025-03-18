@@ -7,27 +7,21 @@ import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.felissedano.dailyreflect.common.GenericResponseDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
@@ -64,19 +58,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDTO) {
+    public ResponseEntity<GenericResponseDTO> login(@RequestBody LoginDto loginDTO) {
         System.out.println("AUTHENTICATING");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new ResponseEntity<>("Login Successful", HttpStatusCode.valueOf(201));
-    }
-
-    //TODO: maybe move this endpoint to UserController as user need to login to logout
-    @DeleteMapping("/logout")
-    public ResponseEntity<String> logout() {
-//        SecurityContextHolder.clearContext();
-        return ResponseEntity.ok("Logout Successfullll");
+        return new ResponseEntity<>(new GenericResponseDTO(201,true, "Login Successful"), HttpStatusCode.valueOf(201));
     }
 
     @PostMapping("/register")
@@ -128,6 +115,14 @@ public class AuthController {
         String message = messageSource.getMessage("auth.password.reset-success", null, LocaleContextHolder.getLocale());
 
         return new ResponseEntity<>(message, HttpStatus.valueOf(201));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<GenericResponseDTO> getStatus() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return ResponseEntity.ok(new GenericResponseDTO(200, true, "You are authenticated as " + authentication.getName()));
+
     }
 
 }

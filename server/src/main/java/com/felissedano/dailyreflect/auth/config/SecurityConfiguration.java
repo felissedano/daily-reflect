@@ -3,11 +3,12 @@ package com.felissedano.dailyreflect.auth.config;
 import com.felissedano.dailyreflect.auth.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,13 +18,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
+
+    private Environment env;
+
+    public SecurityConfiguration(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,6 +43,7 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -47,9 +57,38 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    @Profile("!dev")
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList(env.getProperty("app.allowed-origins", "localhost:4200")));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    @Profile("dev")
+    public UrlBasedCorsConfigurationSource devCorsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", configuration);
+        return source;
+    }
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UrlBasedCorsConfigurationSource corsConfigurationSource) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors((cors) -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests((reqMatcherRegistry) ->
                         reqMatcherRegistry
                                 .requestMatchers("/").permitAll()
@@ -60,7 +99,10 @@ public class SecurityConfiguration {
                         .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpStatus.OK.value());
-                            response.getWriter().write("Logout Successful");
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+//                            response.setHeader("Allow");
+                            response.getWriter().write("{\"message\":\"Logout Successful\"}");
                         })
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
@@ -71,7 +113,7 @@ public class SecurityConfiguration {
                     response.getWriter().write(authException.getMessage());
                 }))
                 .sessionManagement(session -> {
-                    session.maximumSessions(2);
+                    session.maximumSessions(1).maxSessionsPreventsLogin(true);
                     session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                 })
                 .securityContext(context -> {
