@@ -8,13 +8,12 @@ import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
 import com.felissedano.dailyreflect.common.GenericResponseDTO;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -117,11 +116,19 @@ public class AuthController {
         return new ResponseEntity<>(message, HttpStatus.valueOf(201));
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<GenericResponseDTO> getStatus() {
+    @GetMapping("/is-auth")
+    public ResponseEntity<Boolean> isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Boolean isAuth;
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            isAuth = false;
+        } else {
+            isAuth = true;
+        }
+        System.out.println("USER IS " + authentication.isAuthenticated() + " " + authentication.getName());
+        return ResponseEntity.ok(isAuth);
 
-        return ResponseEntity.ok(new GenericResponseDTO(200, true, "You are authenticated as " + authentication.getName()));
+//        return ResponseEntity.ok(new GenericResponseDTO(200, true, );
 
     }
 

@@ -14,9 +14,12 @@
             </button>
             <mat-error *ngIf="loginForm.controls.password.errors">Password required</mat-error>
         </mat-form-field>
-        <mat-error *ngIf="loginFailed">Email or Password invalid.</mat-error>
+        <mat-error *ngIf="loginErrorMessage !== null">{{loginErrorMessage}}</mat-error>
         <br>
         <button mat-flat-button>Login</button>
+<!--        <button type="button" (click)="logout()" mat-button>Logout</button>-->
+        <button type="button" (click)="getStatus()" mat-raised-button>status</button>
+        <button type="button" (click)="logout()" mat-button>Logout</button>
     </form>
     <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
 </app-auth-layout>

@@ -3,6 +3,7 @@ import { JournalPageComponent } from './features/journal/pages/journal-page/jour
 import {LoginPageComponent} from "./core/auth/pages/login-page/login-page.component";
 import {RegisterPageComponent} from "./core/auth/pages/register-page/register-page.component";
 import {authGuard} from "./core/auth/auth.guard";
+import {NotFoundComponent} from "./static/not-found/not-found.component";
 
 export const routes: Routes = [
   { path: 'auth', children: [
@@ -10,6 +11,7 @@ export const routes: Routes = [
       { path: 'register', component: RegisterPageComponent}
     ]
   },
-  { path: '', component: JournalPageComponent, canActivate: [authGuard] },
-  { path: 'journal', component: JournalPageComponent },
+  { path: 'journal', component: JournalPageComponent, canActivate: [authGuard] },
+  { path: '', redirectTo: '/journal', pathMatch: "full"},
+  { path: '**', component: NotFoundComponent}
 ];

@@ -1,15 +1,16 @@
 import {Component} from '@angular/core';
-import {AuthenticationService} from "../../authentication.service";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {AuthLayoutComponent} from "../../../layouts/auth-layout/auth-layout.component";
+import {AuthLayoutComponent} from "../../../layout/auth-layout/auth-layout.component";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatFormField, MatInput, MatSuffix} from "@angular/material/input";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MatDateRangeInput} from "@angular/material/datepicker";
 import {MatIcon} from "@angular/material/icon";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {NgIf} from "@angular/common";
+import {AuthService} from "../../auth.service";
+import {ProblemDetails} from "../../../model/problem-details";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-login-page',
@@ -19,31 +20,64 @@ import {NgIf} from "@angular/common";
 })
 export class LoginPageComponent {
 
+  constructor(private authService: AuthService, private router: Router) {
+  }
+
 
   loginForm = new FormGroup({
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required)
   })
 
-  loginFailed = false;
+  loginErrorMessage: string | null = null;
 
-  onSubmit(){
+  onSubmit() {
     console.log(this.loginForm.controls)
     console.log(this.loginForm.value)
     if (this.loginForm.invalid) {
       return
     }
 
-    //TODO
+    this.authService.userLogin(this.loginForm.value.email as string, this.loginForm.value.password as string).subscribe({
+      next: (response) => {
+        console.log("Success");
+        this.router.navigate(["/journal"]);
+      },
+      error: (err: HttpErrorResponse) => {
+        const pd: ProblemDetails = err.error
+        console.log(err.error);
+        this.loginErrorMessage = pd.detail;
+      }
+    })
+
+  }
+
+  logout() {
+    this.authService.userLogout().subscribe({
+        next: (response) => console.log(response),
+
+        error: (err) => console.log(err)
+      }
+    )
+  }
+
+  getStatus() {
+    this.authService.checkAuthStatus().subscribe({
+      next: res => res == true ? console.log("Logged in") : console.log("Not logged in"),
+      error: err => console.error(err)
+    })
   }
 
   hidePwd = true;
+
   toggleHidePwd() {
     this.hidePwd = !this.hidePwd;
   }
+
   getInputType() {
     return this.hidePwd ? 'password' : 'text';
   }
+
   getVisibilityIcon() {
     return this.hidePwd ? 'visibility' : 'visibility_off';
   }
