@@ -9,7 +9,7 @@ import {
   Validators
 } from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {AuthLayoutComponent} from "../../../layouts/auth-layout/auth-layout.component";
+import {AuthLayoutComponent} from "../../../layout/auth-layout/auth-layout.component";
 import {MatButton} from "@angular/material/button";
 import {MatInput} from "@angular/material/input";
 import {NgIf} from "@angular/common";
