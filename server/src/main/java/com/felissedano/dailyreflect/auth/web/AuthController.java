@@ -87,23 +87,23 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/get-verification-token")
-    public ResponseEntity<String> resendVerificationToken(@RequestParam String email) {
-        //TODO implement it
+    @PostMapping("/get-verification-token")
+    public ResponseEntity<GenericResponseDTO> resendVerificationToken(@RequestParam String email) {
         boolean isSend = emailVerificationService.resendVerificationEmail(email);
         if (isSend) {
             String message = messageSource.getMessage("auth.email.resend-token-success", null, LocaleContextHolder.getLocale());
-            return new ResponseEntity<>(message, HttpStatus.valueOf(201));
+            GenericResponseDTO response = new GenericResponseDTO(201, true, message);
+            return new ResponseEntity<>(response, HttpStatus.valueOf(201));
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/get-reset-password-link")
-    public ResponseEntity<String> sendResetPasswordEmail(@RequestParam String email) {
-
+    @PostMapping("/get-reset-password-link")
+    public ResponseEntity<GenericResponseDTO> sendResetPasswordEmail(@RequestParam String email) {
         passwordService.sendResetPasswordEmail(email);
         String message = messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
-        return new ResponseEntity<>(message, HttpStatusCode.valueOf(201));
+        GenericResponseDTO response = new GenericResponseDTO(201, true, message);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(201));
 
 
     }
@@ -119,13 +119,9 @@ public class AuthController {
     @GetMapping("/is-auth")
     public ResponseEntity<Boolean> isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Boolean isAuth;
-        if (authentication instanceof AnonymousAuthenticationToken) {
-            isAuth = false;
-        } else {
-            isAuth = true;
-        }
-        System.out.println("USER IS " + authentication.isAuthenticated() + " " + authentication.getName());
+        boolean isAuth;
+        isAuth = !(authentication instanceof AnonymousAuthenticationToken);
+        System.out.println("USER IS " + isAuth + " " + authentication.getName());
         return ResponseEntity.ok(isAuth);
 
 //        return ResponseEntity.ok(new GenericResponseDTO(200, true, );

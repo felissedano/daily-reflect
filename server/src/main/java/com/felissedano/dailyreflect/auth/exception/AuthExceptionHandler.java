@@ -63,7 +63,7 @@ public class AuthExceptionHandler {
     public ResponseEntity<ProblemDetail> handleDisabledException(DisabledException exception, Locale locale) {
        ProblemDetail pd = ProblemDetail.forStatus(403);
        pd.setTitle("Account Not Enabled");
-       pd.setDetail("N/A");
+       pd.setDetail("This account is not enabled.");
        pd.setType(URI.create("/problems/auth/account-not-enabled"));
        return new ResponseEntity<>(pd, HttpStatus.valueOf(403));
 

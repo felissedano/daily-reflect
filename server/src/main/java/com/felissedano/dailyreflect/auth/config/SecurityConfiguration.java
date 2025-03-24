@@ -28,7 +28,7 @@ import java.util.Arrays;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private Environment env;
+    private final Environment env;
 
     public SecurityConfiguration(Environment env) {
         this.env = env;
