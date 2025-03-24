@@ -3,8 +3,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {map, tap} from "rxjs";
 
-//timer that after coundown checks if user made any interaction, if yes, checkauth, if logged in, reset user interaction to false
-// event listern that on user make action, set user made action to true
 @Injectable({
   providedIn: 'root'
 })
@@ -54,5 +52,9 @@ export class AuthService {
 
   resendEmailVerification(email: string) {
     return this.httpClient.post(this.API_URL + "api/auth/get-verification-token", {}, {observe: "response", params: {email: email}});
+  }
+
+  confirmEmail(email: string, code: string) {
+    return this.httpClient.post(this.API_URL + "api/auth/verify-email", {}, {observe: "response", params: {email: email, code: code}});
   }
 }

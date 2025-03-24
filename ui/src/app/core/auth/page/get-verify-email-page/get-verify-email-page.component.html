@@ -4,5 +4,8 @@
             click on the link in the email confirm your email address. If you did not receive it, please check your spam box.</h3>
         <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
         <button type="button" (click)="resendEmail()" mat-flat-button>Resend verification email</button>
+        <br>
+        <br>
+        <button type="button" (click)="goToLogin()" mat-button>Go back to login page</button>
     </form>
 </app-auth-layout>

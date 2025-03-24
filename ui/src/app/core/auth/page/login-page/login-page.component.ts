@@ -5,7 +5,7 @@ import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatFormField, MatInput, MatSuffix} from "@angular/material/input";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
-import {Router, RouterLink} from "@angular/router";
+import { Router, RouterLink} from "@angular/router";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {NgIf} from "@angular/common";
 import {AuthService} from "../../auth.service";

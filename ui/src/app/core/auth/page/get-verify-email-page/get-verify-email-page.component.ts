@@ -50,4 +50,8 @@ export class GetVerifyEmailPageComponent {
     )
 
   }
+
+  goToLogin(){
+    void this.router.navigate(["auth/login"]);
+  }
 }
