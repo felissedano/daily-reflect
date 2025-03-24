@@ -11,6 +11,7 @@ import {NgIf} from "@angular/common";
 import {AuthService} from "../../auth.service";
 import {ProblemDetails} from "../../../model/problem-details";
 import {HttpErrorResponse} from "@angular/common/http";
+import {AuthProblemType} from "../../auth-problem-type";
 
 @Component({
   selector: 'app-login-page',
@@ -41,32 +42,20 @@ export class LoginPageComponent {
     this.authService.userLogin(this.loginForm.value.email as string, this.loginForm.value.password as string).subscribe({
       next: (response) => {
         console.log("Success");
-        this.router.navigate(["/journal"]);
+        void this.router.navigate(["/journal"]);
       },
       error: (err: HttpErrorResponse) => {
         const pd: ProblemDetails = err.error
         console.log(err.error);
+        if (pd.type === AuthProblemType.ACCOUNT_DISABLED) {
+          void this.router.navigate(["/auth/verify-email"], {queryParams: {email: this.loginForm.value.email}});
+        }
         this.loginErrorMessage = pd.detail;
       }
     })
 
   }
 
-  logout() {
-    this.authService.userLogout().subscribe({
-        next: (response) => console.log(response),
-
-        error: (err) => console.log(err)
-      }
-    )
-  }
-
-  getStatus() {
-    this.authService.checkAuthStatus().subscribe({
-      next: res => res == true ? console.log("Logged in") : console.log("Not logged in"),
-      error: err => console.error(err)
-    })
-  }
 
   hidePwd = true;
 
@@ -79,6 +68,6 @@ export class LoginPageComponent {
   }
 
   getVisibilityIcon() {
-    return this.hidePwd ? 'visibility' : 'visibility_off';
+    return this.hidePwd ? 'visibility_off' : 'visibility';
   }
 }

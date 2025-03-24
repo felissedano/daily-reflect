@@ -27,15 +27,32 @@ export class AuthService {
   }
 
   userLogout() {
-    return this.httpClient.delete<string>(this.API_URL + "api/auth/logout", {withCredentials: true, observe: 'response'}).pipe(
-        map(res => res.ok)
-      );
+    return this.httpClient.delete<string>(this.API_URL + "api/auth/logout", {
+      withCredentials: true,
+      observe: 'response'
+    }).pipe(
+      map(res => res.ok)
+    );
   }
 
   checkAuthStatus() {
     return this.httpClient.get<boolean>(this.API_URL + "api/auth/is-auth", {
       withCredentials: true,
       observe: 'response'
-    }).pipe(map((res) => res.body === null ? false : res.body === true ))
+    }).pipe(map((res) => res.body === null ? false : res.body))
+  }
+
+  registerUser(user: { email: string, password: string, username: string }) {
+    const headers = new HttpHeaders()
+      .set('content-type', 'application/json');
+    return this.httpClient.post(this.API_URL + "api/auth/register", user, {
+      observe: 'response',
+      withCredentials: true,
+      headers: headers
+    })
+  }
+
+  resendEmailVerification(email: string) {
+    return this.httpClient.post(this.API_URL + "api/auth/get-verification-token", {}, {observe: "response", params: {email: email}});
   }
 }

@@ -1,17 +1,23 @@
 import { Routes } from '@angular/router';
-import { JournalPageComponent } from './features/journal/pages/journal-page/journal-page.component';
-import {LoginPageComponent} from "./core/auth/pages/login-page/login-page.component";
-import {RegisterPageComponent} from "./core/auth/pages/register-page/register-page.component";
+import { JournalPageComponent } from './features/journal/page/journal-page/journal-page.component';
+import {LoginPageComponent} from "./core/auth/page/login-page/login-page.component";
+import {RegisterPageComponent} from "./core/auth/page/register-page/register-page.component";
 import {authGuard} from "./core/auth/auth.guard";
-import {NotFoundComponent} from "./static/not-found/not-found.component";
+import {PageNotFoundComponent} from "./static/page-not-found/page-not-found.component";
+import {GetVerifyEmailPageComponent} from "./core/auth/page/get-verify-email-page/get-verify-email-page.component";
+import {ConfirmEmailPageComponent} from "./core/auth/page/confirm-email-page/confirm-email-page.component";
 
 export const routes: Routes = [
   { path: 'auth', children: [
       { path: 'login', component: LoginPageComponent},
-      { path: 'register', component: RegisterPageComponent}
+      { path: 'register', component: RegisterPageComponent},
+      { path: 'verify-email', component: GetVerifyEmailPageComponent},
+      { path: 'verify/user/email', component: ConfirmEmailPageComponent},
+      { path: 'forgot-password', component: PageNotFoundComponent},
+      { path: 'reset-password', component: PageNotFoundComponent}
     ]
   },
   { path: 'journal', component: JournalPageComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/journal', pathMatch: "full"},
-  { path: '**', component: NotFoundComponent}
+  { path: '**', component: PageNotFoundComponent}
 ];

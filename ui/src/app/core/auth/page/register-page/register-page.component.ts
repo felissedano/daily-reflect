@@ -13,7 +13,8 @@ import {AuthLayoutComponent} from "../../../layout/auth-layout/auth-layout.compo
 import {MatButton} from "@angular/material/button";
 import {MatInput} from "@angular/material/input";
 import {NgIf} from "@angular/common";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
+import {AuthService} from "../../auth.service";
 
 @Component({
   selector: 'app-register-page',
@@ -22,6 +23,9 @@ import {RouterLink} from "@angular/router";
   styleUrl: './register-page.component.scss'
 })
 export class RegisterPageComponent {
+
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
   validateSamePassword = (control: AbstractControl): ValidationErrors | null => {
     const password: string | undefined = control.parent?.get('password')?.value;
@@ -50,7 +54,19 @@ export class RegisterPageComponent {
       return
     }
 
+    const email = this.registerForm.value.email as string;
+    const password = this.registerForm.value.password as string;
+    const username = this.registerForm.value.username as string;
+
+    this.authService.registerUser({email, password, username}).subscribe(
+      {
+        next: value => {console.log(value.body); void this.router.navigate(['auth/verify-email'], {queryParams: {email: email}});},
+        error: err => this.errorMessage = err.error.detail
+      }
+    );
 
   }
+
+  errorMessage: null | string = null;
 
 }
