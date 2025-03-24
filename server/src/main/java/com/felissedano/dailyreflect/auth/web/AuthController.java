@@ -77,10 +77,11 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam String email, @RequestParam String code) {
+    public ResponseEntity<GenericResponseDTO> verifyEmail(@RequestParam String email, @RequestParam String code) {
         try {
             emailVerificationService.enableUser(email, code);
-            return new ResponseEntity<>("Verification Success", HttpStatusCode.valueOf(201));
+            GenericResponseDTO response = new GenericResponseDTO(201, true, "Verification Success");
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(201));
 
         } catch (IllegalStateException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -109,11 +110,12 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO passwordResetDTO) {
+    public ResponseEntity<GenericResponseDTO> resetPassword(@RequestBody PasswordResetDTO passwordResetDTO) {
         passwordService.resetPassword(passwordResetDTO);
         String message = messageSource.getMessage("auth.password.reset-success", null, LocaleContextHolder.getLocale());
 
-        return new ResponseEntity<>(message, HttpStatus.valueOf(201));
+        GenericResponseDTO response = new GenericResponseDTO(201, true, message);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(201));
     }
 
     @GetMapping("/is-auth")

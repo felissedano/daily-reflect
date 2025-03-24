@@ -45,7 +45,7 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(value = BadEmailVerificationRequestException.class)
     public ResponseEntity<String> handleBadEmailVerificationRequestException(BadEmailVerificationRequestException exception, Locale locale) {
-        return new ResponseEntity<>("Email already verified or user not exists", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("{\"message\": \"Email already verified or user not exists\"}", HttpStatus.BAD_REQUEST);
 
     }
 
