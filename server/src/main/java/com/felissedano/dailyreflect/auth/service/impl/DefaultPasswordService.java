@@ -13,7 +13,7 @@ import com.felissedano.dailyreflect.common.service.MailService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +28,17 @@ public class DefaultPasswordService implements PasswordService {
     private final MailService mailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Environment env;
 
     public DefaultPasswordService(UserRepository userRepository,
                                   MailService mailService,
                                   PasswordResetTokenRepository passwordResetTokenRepository,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordEncoder passwordEncoder, Environment environment) {
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.env = environment;
     }
 
     @Override
@@ -66,15 +68,12 @@ public class DefaultPasswordService implements PasswordService {
         resetToken.setExpirationDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2)); // two hours
         passwordResetTokenRepository.save(resetToken);
 
-        Locale locale = LocaleContextHolder.getLocale();
-        log.info(locale.toString());
-        System.out.println(locale);
-
+        String link = env.getProperty("app.client-url") + "/auth/reset-password?email=" + email + "&code=" + token;
         mailService.sendLocaleTextEmail(
                 email,
                 "auth.password.mail.reset-password.subject",
                 "auth.password.mail.reset-password.content",
-                new String[]{"https://www.example.com"}
+                new String[]{link}
         );
     }
 
