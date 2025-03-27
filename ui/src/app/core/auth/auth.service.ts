@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {map, tap} from "rxjs";
+import {map} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -51,10 +51,27 @@ export class AuthService {
   }
 
   resendEmailVerification(email: string) {
-    return this.httpClient.post(this.API_URL + "api/auth/get-verification-token", {}, {observe: "response", params: {email: email}});
+    return this.httpClient.post(this.API_URL + "api/auth/get-verification-token", {}, {
+      observe: "response",
+      params: {email: email}
+    });
   }
 
   confirmEmail(email: string, code: string) {
-    return this.httpClient.post(this.API_URL + "api/auth/verify-email", {}, {observe: "response", params: {email: email, code: code}});
+    return this.httpClient.post(this.API_URL + "api/auth/verify-email", {}, {
+      observe: "response",
+      params: {email: email, code: code}
+    });
+  }
+
+  sendPasswordResetLink(email: string) {
+    return this.httpClient.post(this.API_URL + "api/auth/get-reset-password-link", {}, {
+      observe: "response",
+      params: {email: email}
+    });
+  }
+
+  resetPassword(passwordResetInfo: { email: string, password: string, token: string }) {
+    return this.httpClient.post(this.API_URL + "api/auth/reset-password", passwordResetInfo, {observe: "response"});
   }
 }

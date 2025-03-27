@@ -15,6 +15,7 @@ import {MatInput} from "@angular/material/input";
 import {NgIf} from "@angular/common";
 import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "../../auth.service";
+import {passwordValidatorArray, samePasswordValidator} from "../../auth-validators";
 
 @Component({
   selector: 'app-register-page',
@@ -27,24 +28,12 @@ export class RegisterPageComponent {
   constructor(private authService: AuthService, private router: Router) {
   }
 
-  validateSamePassword = (control: AbstractControl): ValidationErrors | null => {
-    const password: string | undefined = control.parent?.get('password')?.value;
-    const confirmPassword: string | undefined = control.parent?.get('confirmPassword')?.value;
-    if (password === confirmPassword) {
-      return null;
-    } else {
-      return {'samePassword': true};
-    }
-  }
+
   registerForm = new FormGroup({
     username: new FormControl("", [Validators.required, Validators.minLength(4)]),
     email: new FormControl("", [Validators.required, Validators.email]),
-    password: new FormControl("", [
-      Validators.required,
-      Validators.minLength(8),
-      Validators.pattern('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})')
-    ]),
-    confirmPassword: new FormControl("", [Validators.required, this.validateSamePassword])
+    password: new FormControl("", [Validators.required].concat(passwordValidatorArray)),
+    confirmPassword: new FormControl("", [Validators.required, samePasswordValidator])
 
   })
 
