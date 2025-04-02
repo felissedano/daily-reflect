@@ -11,7 +11,8 @@ import com.icegreen.greenmail.util.ServerSetup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
-import io.restassured.http.Headers;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -60,6 +60,10 @@ public class AuthIntegrationTest {
     public void tearDown() {
         greenMail.stop();
     }
+
+//    private String getCsrfToken() {
+//
+//    }
 
     @Test
     public void whenUserRegisterWithValidCredential_shouldSucceed() {
@@ -191,7 +195,7 @@ public class AuthIntegrationTest {
                 .statusCode(201);
 
         // login
-        var sessionId = given()
+         ExtractableResponse<Response> request = given()
                 .contentType(ContentType.JSON).body("""
                         {
                           "email": "alice@example.com",
@@ -199,14 +203,18 @@ public class AuthIntegrationTest {
                         }
                         """)
                 .when().post("api/auth/login")
-                .then().statusCode(201).extract().sessionId();
+                .then().statusCode(201).extract();
+
+        var sessionId = request.sessionId();
+        var xsrfToken = request.cookie("XSRF-TOKEN");
 
 
         // verify login is successful
        given().sessionId(sessionId).when().get("api/user/hello").then().body(containsString("Hello World!"));
 
        // logout
-        given().sessionId(sessionId).post("api/auth/logout").then().statusCode(200);
+        given().sessionId(sessionId).header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .post("api/auth/logout").then().statusCode(200);
 
         // verify cannot access secure endpoint
         given().sessionId(sessionId).get("api/user/hello").then().statusCode(401);
