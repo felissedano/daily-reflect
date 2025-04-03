@@ -46,7 +46,7 @@ export class LoginPageComponent {
       },
       error: (err: HttpErrorResponse) => {
         const pd: ProblemDetails = err.error
-        console.log(err.error);
+        console.log(err);
         if (pd.type === AuthProblemType.ACCOUNT_DISABLED) {
           void this.router.navigate(["/auth/verify-email"], {queryParams: {email: this.loginForm.value.email}});
         }
