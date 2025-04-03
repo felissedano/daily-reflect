@@ -1,12 +1,12 @@
 package com.felissedano.dailyreflect.auth.web;
 
+import com.felissedano.dailyreflect.common.GenericResponseDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,19 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping("hello")
-    public String hello() {
-        return "Hello World!";
+    public GenericResponseDTO hello() {
+        return new GenericResponseDTO(200, true, "Hello World!");
     }
 
     @GetMapping("user")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public String user(Authentication auth) {
-       return "Hello " + auth.getName() + " with authorities: " + auth.getAuthorities();
+    public GenericResponseDTO user(Authentication auth) {
+        String message = "Hello " + auth.getName() + " with authorities: " + auth.getAuthorities();
+       return new GenericResponseDTO(200, true, message);
     }
 
     @GetMapping("admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String admin(Authentication auth) {
-        return "Hello admin " + auth.getName() + " with authorities: " + auth.getAuthorities();
+    public GenericResponseDTO admin(Authentication auth) {
+        String message = "Hello admin " + auth.getName() + " with authorities: " + auth.getAuthorities();
+        return new GenericResponseDTO(200, true, message);
+    }
+
+    @PostMapping("test-post")
+    public GenericResponseDTO testPostRequest() {
+        return new GenericResponseDTO(200, true, "CORS and CSRF working correctly");
     }
 }
