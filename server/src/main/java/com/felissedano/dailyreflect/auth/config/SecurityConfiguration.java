@@ -20,12 +20,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.*;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 @Configuration
@@ -65,8 +64,8 @@ public class SecurityConfiguration {
     @Profile("!dev")
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedOrigins(Arrays.asList(env.getProperty("app.allowed-origins", "localhost:4200")));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedOrigins(List.of(env.getProperty("app.allowed-origins", "localhost:4200")));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -77,10 +76,10 @@ public class SecurityConfiguration {
     @Profile("dev")
     public UrlBasedCorsConfigurationSource devCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedMethods(List.of("*"));
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
