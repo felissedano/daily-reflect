@@ -5,6 +5,7 @@ import {GetVerifyEmailPageComponent} from "./page/get-verify-email-page/get-veri
 import {ConfirmEmailPageComponent} from "./page/confirm-email-page/confirm-email-page.component";
 import {ForgotPasswordPageComponent} from "./page/forgot-password-page/forgot-password-page.component";
 import {ResetPasswordPageComponent} from "./page/reset-password-page/reset-password-page.component";
+import {guestGuard} from "./guard/guest.guard";
 
 export const authRoutes: Routes = [
   {
@@ -16,6 +17,7 @@ export const authRoutes: Routes = [
       { path: 'verify/user/email', component: ConfirmEmailPageComponent},
       { path: 'forgot-password', component: ForgotPasswordPageComponent},
       { path: 'reset-password', component: ResetPasswordPageComponent}
-    ]
+    ],
+    canActivate: [guestGuard]
   }
 ]
