@@ -99,7 +99,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UrlBasedCorsConfigurationSource corsConfigurationSource) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource) throws Exception {
         httpSecurity
 //                .csrf(AbstractHttpConfigurer::disable)
                 .csrf(csrf ->
@@ -108,11 +108,10 @@ public class SecurityConfiguration {
                             .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
                             .ignoringRequestMatchers(matchers -> {
                                 String path = matchers.getServletPath();
-                                return (path.startsWith("/api/auth/") && !path.startsWith("/api/auth/logout")) ||
-                                        path.startsWith("api/public");
+                                return path.startsWith("api/public");
                             })
                 )
-                .cors((cors) -> cors.configurationSource(corsConfigurationSource))
+                .cors((cors) -> cors.configurationSource(urlBasedCorsConfigurationSource))
                 .authorizeHttpRequests((reqMatcherRegistry) ->
                         reqMatcherRegistry
                                 .requestMatchers("/").permitAll()
@@ -133,7 +132,7 @@ public class SecurityConfiguration {
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write(authException.getMessage());
+                    response.getWriter().write("{\"message\": \"" + authException.getMessage() + "\"}");
                 }))
                 .sessionManagement(session -> {
                     session.maximumSessions(1).maxSessionsPreventsLogin(true);
