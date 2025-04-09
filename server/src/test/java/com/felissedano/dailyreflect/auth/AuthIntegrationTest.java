@@ -11,7 +11,8 @@ import com.icegreen.greenmail.util.ServerSetup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
-import io.restassured.http.Headers;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -61,10 +61,35 @@ public class AuthIntegrationTest {
         greenMail.stop();
     }
 
+    private String getXsrfToken() {
+        ExtractableResponse<Response> request = when().get("api/auth/is-auth")
+                .then().statusCode(200).extract();
+
+        return request.cookie("XSRF-TOKEN");
+    }
+
     @Test
-    public void whenUserRegisterWithValidCredential_shouldSucceed() {
+    public void whenDoAnyPostRequestWithoutCsrf_shouldFail() {
         given()
                 .contentType(ContentType.JSON)
+                .body("""
+                        {
+                          "email": "john@example.com",
+                          "username": "john",
+                          "password": "password"
+                        }
+                        """)
+                .when().post("api/auth/register")
+                .then().statusCode(401);
+    }
+
+    @Test
+    public void whenUserRegisterWithValidCredential_shouldSucceed() {
+        String xsrfToken = getXsrfToken();
+
+        given()
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
                 .body("""
                         {
                           "email": "john@example.com",
@@ -81,8 +106,11 @@ public class AuthIntegrationTest {
 
     @Test
     public void whenUserLoginWithIncorrectCredentials_shouldNotSucceed() {
+        String xsrfToken = getXsrfToken();
+
         given()
                 .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
                 .body("""
                         {
                         "email":  "fake@example.com",
@@ -94,12 +122,14 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowLocked() {
+    public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowForbidden() {
+        String xsrfToken = getXsrfToken();
 
         userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password"));
 
         given()
                 .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
                 .body("""
                         {
                         "email":  "jane@example.com",
@@ -107,20 +137,26 @@ public class AuthIntegrationTest {
                         }
                         """)
                 .when().post("/api/auth/login")
-                .then().statusCode(423)
-                .body(containsString("Account is disabled"));
+                .then().statusCode(403)
+                .body(containsString("Account Not Enabled"));
     }
 
     @Test
     public void whenUserVerifyEmailWithCorrectCodeButDoItAgain_shouldSucceedAndThenFail() {
+        String xsrfToken = getXsrfToken();
+
         User user = userService.registerNormalUser(new UserDto("joe@example.com", "joe1", "password"));
         String code = user.getVerificationCode();
-        when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
+        given()
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
                 .then()
                 .body(containsString("Verification Success"))
                 .statusCode(201);
 
-        when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
+        given()
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .when().post("api/auth/verify-email?email=joe@example.com&code=" + code)
                 .then()
                 .body(containsString("Email Verification Failed"))
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
@@ -130,9 +166,13 @@ public class AuthIntegrationTest {
 
     @Test
     public void whenUserVerifyEmailWithIncorrectCode_shouldFail() {
+        String xsrfToken = getXsrfToken();
+
         User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
         String code = user.getVerificationCode();
-        when().post("api/auth/verify-email?email=eve@example.com&code=" + code + "wrong")
+        given()
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .when().post("api/auth/verify-email?email=eve@example.com&code=" + code + "wrong")
                 .then()
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
                 .body(containsString("Email Verification Failed"))
@@ -143,10 +183,13 @@ public class AuthIntegrationTest {
 
     @Test
     public void whenUserVerifyEmailWithIncorrectCodeWithLocale_shouldFailWithLocalResponse() {
+        String xsrfToken = getXsrfToken();
+
         User user = userService.registerNormalUser(new UserDto("bob@example.com", "bob1", "password"));
         String code = user.getVerificationCode();
         given()
                 .header(new Header("Accept-Language", "fr"))
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
                 .when().post("api/auth/verify-email?email=bob@example.com&code=" + code + "wrong")
                 .then()
                 .body("type", containsString("/problems/auth/token-expired-or-invalid"))
@@ -158,9 +201,12 @@ public class AuthIntegrationTest {
 
     @Test
     public void whenUserRegisterVerifyAndLogin_shouldSucceed() {
+        String xsrfToken = getXsrfToken();
+
         UserDto user = new UserDto("alice@example.com", "alice", "password");
         given()
                 .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
                 .body("""
                         {
                             "email": "alice@example.com",
@@ -185,28 +231,36 @@ public class AuthIntegrationTest {
         String verificationToken = userService.findUserByEmail("alice@example.com").orElseThrow().getVerificationCode();
 
         // verify email
-        when().post("api/auth/verify-email?email=alice@example.com&code=" + verificationToken)
+        given()
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .when().post("api/auth/verify-email?email=alice@example.com&code=" + verificationToken)
                 .then()
                 .body(containsString("Verification Success"))
                 .statusCode(201);
 
         // login
-        var sessionId = given()
-                .contentType(ContentType.JSON).body("""
+        ExtractableResponse<Response> request = given()
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .body("""
                         {
                           "email": "alice@example.com",
                           "password": "password"
                         }
                         """)
                 .when().post("api/auth/login")
-                .then().statusCode(201).extract().sessionId();
+                .then().statusCode(201).extract();
+
+        var sessionId = request.sessionId();
+//        var xsrfToken = request.cookie("XSRF-TOKEN");
 
 
         // verify login is successful
-       given().sessionId(sessionId).when().get("api/user/hello").then().body(containsString("Hello World!"));
+        given().sessionId(sessionId).when().get("api/user/hello").then().body(containsString("Hello World!"));
 
-       // logout
-        given().sessionId(sessionId).post("api/auth/logout").then().statusCode(200);
+        // logout
+        given().sessionId(sessionId).header(new Header("X-XSRF-TOKEN", xsrfToken)).cookie("XSRF-TOKEN", xsrfToken)
+                .post("api/auth/logout").then().statusCode(200);
 
         // verify cannot access secure endpoint
         given().sessionId(sessionId).get("api/user/hello").then().statusCode(401);

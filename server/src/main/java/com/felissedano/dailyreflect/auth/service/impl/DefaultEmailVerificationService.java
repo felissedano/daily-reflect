@@ -12,12 +12,12 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 public class DefaultEmailVerificationService implements EmailVerificationService {
@@ -25,17 +25,20 @@ public class DefaultEmailVerificationService implements EmailVerificationService
 
     private final MailService mailService;
     private final UserRepository userRepository;
+    private final Environment env;
 
 
-    public DefaultEmailVerificationService(MailService mailService, UserRepository userRepository) {
+    public DefaultEmailVerificationService(MailService mailService, UserRepository userRepository, Environment environment) {
         this.mailService = mailService;
         this.userRepository = userRepository;
+        this.env = environment;
     }
 
     @Override
     public boolean sendVerificationEmail(String email, String username, String code) {
         Locale locale = LocaleContextHolder.getLocale();
-        Object[] args = {username, code};
+        String url = env.getProperty("app.client-url") + "/auth/verify/user/email?email=" + email + "&code=" + code;
+        Object[] args = {username, url};
         return mailService.sendLocaleTextEmail(email, "auth.email.verify-with-link.subject", "auth.email.verify-with-link.content", args);
     }
 

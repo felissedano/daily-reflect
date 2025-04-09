@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,17 +45,38 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(value = BadEmailVerificationRequestException.class)
     public ResponseEntity<String> handleBadEmailVerificationRequestException(BadEmailVerificationRequestException exception, Locale locale) {
-        return new ResponseEntity<>("Email already verified or user not exists", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("{\"message\": \"Email already verified or user not exists\"}", HttpStatus.BAD_REQUEST);
 
     }
 
     @ExceptionHandler(value = SamePasswordException.class)
     public ResponseEntity<ProblemDetail> handleSamePasswordException(SamePasswordException exception, Locale locale) {
-        String detail = messageSource.getMessage("error.auth.same-password", null, locale);
+//        String detail = messageSource.getMessage("error.auth.same-password", null, locale);
         ProblemDetail pd = ProblemDetail.forStatus(400);
-        pd.setDetail("New Password Same As Old Password");
+        pd.setTitle("New Password Same As Old Password");
+        pd.setDetail("N/A");
         pd.setType(URI.create("/problems/auth/same-password"));
         return new ResponseEntity<>(pd, HttpStatus.valueOf(400));
+    }
+
+    @ExceptionHandler(value = DisabledException.class)
+    public ResponseEntity<ProblemDetail> handleDisabledException(DisabledException exception, Locale locale) {
+       ProblemDetail pd = ProblemDetail.forStatus(403);
+       pd.setTitle("Account Not Enabled");
+       pd.setDetail("This account is not enabled.");
+       pd.setType(URI.create("/problems/auth/account-not-enabled"));
+       return new ResponseEntity<>(pd, HttpStatus.valueOf(403));
+
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleBadCredentialsException(BadCredentialsException exception, Locale locale) {
+        String details =  messageSource.getMessage("error.auth.credentials-incorrect", null, locale);
+        ProblemDetail pd = ProblemDetail.forStatus(401);
+        pd.setTitle("Credentials Incorrect");
+        pd.setDetail(details);
+        pd.setType(URI.create("/problems/auth/credentials-incorrect"));
+        return new ResponseEntity<>(pd, HttpStatus.valueOf(401));
     }
 
 }

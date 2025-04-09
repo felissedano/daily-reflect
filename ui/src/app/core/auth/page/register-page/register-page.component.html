@@ -1,0 +1,36 @@
+<app-auth-layout title="Register">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput type="text" formControlName="username" name="username">
+            <mat-error *ngIf="registerForm.controls.username.hasError('required')">This field is required</mat-error>
+            <mat-error *ngIf="registerForm.controls.username.hasError('minlength')">Username needs to be a least 4 characters long</mat-error>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" name="email">
+            <mat-error *ngIf="registerForm.controls.email.hasError('required')">This field is required</mat-error>
+            <mat-error *ngIf="registerForm.controls.email.hasError('email')">Invalid email format</mat-error>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password" name="password">
+            <mat-error *ngIf="registerForm.controls.password.hasError('required')">This field is required</mat-error>
+            <mat-error *ngIf="registerForm.controls.password.hasError('pattern')">Must contain at least 8 character, one capital letter, one lowercase letter and one number</mat-error>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input matInput type="password" formControlName="confirmPassword" name="confirmPassword">
+            <mat-error *ngIf="registerForm.controls.confirmPassword.hasError('required')">This field is required</mat-error>
+            <mat-error *ngIf="registerForm.controls.confirmPassword.hasError('samePassword')">The two passwords do not match</mat-error>
+        </mat-form-field>
+        <br>
+
+        <button mat-flat-button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a routerLink="/auth/login">Login</a></p>
+    <p><a routerLink="/auth/forgot-password">Forgot your password?</a></p>
+</app-auth-layout>
