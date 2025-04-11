@@ -5,17 +5,18 @@ import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatFormField, MatInput, MatSuffix} from "@angular/material/input";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
-import { Router, RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {NgIf} from "@angular/common";
 import {AuthService} from "../../auth.service";
 import {ProblemDetails} from "../../../model/problem-details";
 import {HttpErrorResponse} from "@angular/common/http";
 import {AuthProblemType} from "../../auth-problem-type";
+import {TranslateModule} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-login-page',
-  imports: [MatSlideToggleModule, AuthLayoutComponent, MatButton, MatInput, ReactiveFormsModule, MatFormFieldModule, MatIcon, MatIconButton, MatSuffix, RouterLink, NgIf],
+  imports: [MatSlideToggleModule, AuthLayoutComponent, MatButton, MatInput, ReactiveFormsModule, MatFormFieldModule, MatIcon, MatIconButton, MatSuffix, RouterLink, NgIf, TranslateModule],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })

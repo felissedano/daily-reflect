@@ -1,10 +1,12 @@
 import {Component, Input} from '@angular/core';
 import {MatCard} from "@angular/material/card";
+import {LanguageSwitcherComponent} from "../../lang/language-switcher/language-switcher.component";
 
 @Component({
   selector: 'app-auth-layout',
   imports: [
     MatCard,
+    LanguageSwitcherComponent,
   ],
   template: `
     <div class="auth-container"  >
@@ -13,6 +15,9 @@ import {MatCard} from "@angular/material/card";
         <h1 class="auth-title">{{ title }}</h1>
         <ng-content></ng-content>
       </mat-card>
+      <app-language-switcher/>
+      <br>
+      <br>
       <footer>All Right Reserved</footer>
     </div>  `,
   styles: `
