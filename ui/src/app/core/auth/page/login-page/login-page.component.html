@@ -16,11 +16,8 @@
         </mat-form-field>
         <mat-error *ngIf="loginErrorMessage !== null">{{loginErrorMessage}}</mat-error>
         <br>
-        <button mat-flat-button>Login</button>
-<!--        <button type="button" (click)="logout()" mat-button>Logout</button>-->
-<!--        <button type="button" (click)="getStatus()" mat-raised-button>status</button>-->
-<!--        <button type="button" (click)="logout()" mat-button>Logout</button>-->
+        <button mat-flat-button>{{'auth.login' | translate}}</button>
     </form>
-    <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
-    <p><a routerLink="/auth/forgot-password">Forgot your password?</a></p>
+    <p>{{'auth.newUser_q' | translate}} <a routerLink="/auth/register">{{'auth.register' | translate }}</a></p>
+    <p><a routerLink="/auth/forgot-password">{{'auth.forgotPassword' | translate }}</a></p>
 </app-auth-layout>
