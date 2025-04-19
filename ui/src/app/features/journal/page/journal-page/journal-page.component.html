@@ -1,3 +1,30 @@
 <app-main-layout/>
-<p>journal-page works!</p>
-<button (click)="refreshSession()" mat-flat-button>Button</button>
+<div class="journal-container">
+
+    <div class="date-navigator">
+        <h1>{{'journal.pageTitle' | translate}}</h1>
+        <div class="date-nav-bar">
+            <button mat-icon-button><mat-icon>arrow_back</mat-icon></button>
+            <h3 class="date-display">{{date | date:'EEEE,MMM d,y'}}</h3>
+            <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
+        </div>
+        <div>
+            <button mat-icon-button aria-label="Open calendar" >
+                <mat-icon>calendar_today</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="journal-form-container">
+        <form>
+            <mat-form-field class="journal-content-field">
+                <textarea matInput></textarea>
+            </mat-form-field>
+            <br>
+            <button mat-flat-button><mat-icon>add</mat-icon> {{'journal.addLabel' | translate}}</button>
+        </form>
+        <br>
+        <button (click)="refreshSession()" mat-flat-button>Save</button>
+    </div>
+
+</div>
