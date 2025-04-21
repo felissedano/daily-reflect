@@ -7,24 +7,41 @@ import {MatInput} from "@angular/material/input";
 import {TranslatePipe} from "@ngx-translate/core";
 import {MatIcon} from "@angular/material/icon";
 import {DatePipe} from "@angular/common";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {CalendarPopupComponent} from "../../calendar-popup/calendar-popup.component";
 
 @Component({
   selector: 'app-journal-page',
-  imports: [MainLayoutComponent, MatButton, MatFormField, MatInput, TranslatePipe, MatIcon, DatePipe],
+  imports: [MainLayoutComponent, MatButton, MatFormField, MatInput, TranslatePipe, MatIcon, DatePipe, CalendarPopupComponent],
   templateUrl: './journal-page.component.html',
   styleUrl: './journal-page.component.scss'
 })
 export class JournalPageComponent {
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private dialog: MatDialog) {
   }
 
-  date: Date = new Date();
+  currentSelectedDate: Date = new Date();
 
   refreshSession() {
     this.authService.checkAuthStatus().subscribe({
       next: value => console.log(value),
       error: err => console.error(err)
     })
+  }
+
+  openCalendar(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = { currentSelectedDate: this.currentSelectedDate};
+    dialogConfig.width = '400px';
+    dialogConfig.hasBackdrop = true;
+
+    const dialogRef = this.dialog.open(CalendarPopupComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.currentSelectedDate = res;
+      }
+    });
   }
 
 }

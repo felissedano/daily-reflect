@@ -5,11 +5,11 @@
         <h1>{{'journal.pageTitle' | translate}}</h1>
         <div class="date-nav-bar">
             <button mat-icon-button><mat-icon>arrow_back</mat-icon></button>
-            <h3 class="date-display">{{date | date:'EEEE,MMM d,y'}}</h3>
+            <h3 class="date-display">{{currentSelectedDate | date:'EEEE,MMM d,y'}}</h3>
             <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
         </div>
         <div>
-            <button mat-icon-button aria-label="Open calendar" >
+            <button mat-icon-button aria-label="Open calendar" (click)="openCalendar()">
                 <mat-icon>calendar_today</mat-icon>
             </button>
         </div>

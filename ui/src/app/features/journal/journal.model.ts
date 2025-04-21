@@ -1,5 +1,5 @@
 export interface Journal {
   date: Date,
-  content: String,
-  labels: [String],
+  content: string,
+  labels: string[],
 }
