@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthLayoutComponent} from "../../../layout/auth-layout/auth-layout.component";
 import {MatButton} from "@angular/material/button";
-import {ActivatedRoute, Route, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../auth.service";
 import {NgIf} from "@angular/common";
 import {ProblemDetails} from "../../../model/problem-details";
@@ -16,7 +16,7 @@ import {ProblemDetails} from "../../../model/problem-details";
   templateUrl: './confirm-email-page.component.html',
   styleUrl: './confirm-email-page.component.scss'
 })
-export class ConfirmEmailPageComponent {
+export class ConfirmEmailPageComponent implements OnInit{
 
   constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
   }

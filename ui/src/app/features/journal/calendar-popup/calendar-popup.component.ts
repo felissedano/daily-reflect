@@ -36,7 +36,7 @@ interface CalendarDay {
   templateUrl: './calendar-popup.component.html',
   styleUrl: './calendar-popup.component.scss'
 })
-export class CalendarPopupComponent{
+export class CalendarPopupComponent implements OnInit {
 
   currentMonth: Date;
   calendarDays: CalendarDay[] = [];

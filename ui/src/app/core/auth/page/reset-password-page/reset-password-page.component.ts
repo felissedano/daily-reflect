@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../auth.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {ProblemDetails} from "../../../model/problem-details";
@@ -27,7 +27,7 @@ import {MatButton} from "@angular/material/button";
   templateUrl: './reset-password-page.component.html',
   styleUrl: './reset-password-page.component.scss'
 })
-export class ResetPasswordPageComponent {
+export class ResetPasswordPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
   }
