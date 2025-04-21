@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {MainLayoutComponent} from "../../../../core/layout/main-layout/main-layout.component";
 import {AuthService} from "../../../../core/auth/auth.service";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatFormField} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -12,7 +12,7 @@ import {CalendarPopupComponent} from "../../calendar-popup/calendar-popup.compon
 
 @Component({
   selector: 'app-journal-page',
-  imports: [MainLayoutComponent, MatButton, MatFormField, MatInput, TranslatePipe, MatIcon, DatePipe, CalendarPopupComponent],
+  imports: [MainLayoutComponent, MatButton, MatFormField, MatInput, TranslatePipe, MatIcon, DatePipe, MatIconButton],
   templateUrl: './journal-page.component.html',
   styleUrl: './journal-page.component.scss'
 })
