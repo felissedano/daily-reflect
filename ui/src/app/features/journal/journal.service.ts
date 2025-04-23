@@ -42,4 +42,14 @@ export class JournalService {
 
     return of(filteredJournal).pipe(delay(300));
   }
+
+  getJournalOfDay(year: number, month: number, day: number): Observable<Journal> {
+    if (day % 2 == 0) {
+      return of({content: "", labels: [], date: new Date(year,month + 1, day)}).pipe(delay(100));
+    } else {
+      const mockJournal: Journal = {date: new Date(year,month + 1, day), labels: ['some labels', "achievement"], content: "Won a prize today"};
+      return of(mockJournal).pipe(delay(100));
+    }
+
+  }
 }

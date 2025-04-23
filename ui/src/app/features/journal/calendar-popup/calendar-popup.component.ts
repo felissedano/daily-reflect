@@ -116,7 +116,7 @@ export class CalendarPopupComponent implements OnInit {
 
   hasJournal(date: Date): boolean {
     const stringDate = stringfyDate(date);
-    console.log(stringDate, this.journalByDate[stringDate])
+    // console.log(stringDate, this.journalByDate[stringDate])
     return this.journalByDate[stringDate] !== undefined;
   }
 
@@ -127,10 +127,10 @@ export class CalendarPopupComponent implements OnInit {
       this.journalByDate = {};
       console.log(journals)
       journals.forEach(journal => {
-        console.log(journal.date)
+        // console.log(journal.date)
         this.journalByDate[stringfyDate(journal.date)] = journal;
       })
-      console.log(this.journalByDate)
+      // console.log(this.journalByDate)
     })
   }
 
