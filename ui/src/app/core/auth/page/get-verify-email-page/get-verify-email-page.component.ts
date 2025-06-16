@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthLayoutComponent} from "../../../layout/auth-layout/auth-layout.component";
 import {MatButton} from "@angular/material/button";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -20,7 +20,7 @@ import {GenericResponse} from "../../../model/generic-response";
   templateUrl: './get-verify-email-page.component.html',
   styleUrl: './get-verify-email-page.component.scss'
 })
-export class GetVerifyEmailPageComponent {
+export class GetVerifyEmailPageComponent implements OnInit {
 
   constructor(private readonly route: ActivatedRoute, private router: Router, private authService: AuthService, private snackbar: MatSnackBar) {
   }
