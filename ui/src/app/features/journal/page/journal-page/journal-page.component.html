@@ -16,9 +16,9 @@
     </div>
 
     <div class="journal-form-container">
-        <form>
+        <form [formGroup]="journalForm">
             <mat-form-field class="journal-content-field">
-                <textarea matInput></textarea>
+                <textarea matInput formControlName="content" name="content"></textarea>
             </mat-form-field>
             <br>
             <button mat-flat-button><mat-icon>add</mat-icon> {{'journal.addLabel' | translate}}</button>
