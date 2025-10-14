@@ -1,6 +1,7 @@
 package com.felissedano.dailyreflect.auth.service.impl;
 
 import com.felissedano.dailyreflect.auth.AuthUtils;
+import com.felissedano.dailyreflect.auth.UserCreatedEvent;
 import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.exception.BadEmailVerificationRequestException;
@@ -11,6 +12,7 @@ import com.felissedano.dailyreflect.common.service.MailService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -25,12 +27,14 @@ public class DefaultEmailVerificationService implements EmailVerificationService
 
     private final MailService mailService;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher appEventPublisher;
     private final Environment env;
 
 
-    public DefaultEmailVerificationService(MailService mailService, UserRepository userRepository, Environment environment) {
+    public DefaultEmailVerificationService(MailService mailService, UserRepository userRepository, ApplicationEventPublisher appEventPublisher, Environment environment) {
         this.mailService = mailService;
         this.userRepository = userRepository;
+        this.appEventPublisher = appEventPublisher;
         this.env = environment;
     }
 
@@ -77,6 +81,7 @@ public class DefaultEmailVerificationService implements EmailVerificationService
             user.setEmailVerifiedAt(new Date(System.currentTimeMillis()));
             user.setCodeExpiration(null);
             userRepository.save(user);
+            appEventPublisher.publishEvent(new UserCreatedEvent(this, user));
         } else {
             throw new TokenExpiredOrInvalidException("Email Validation Error");
         }
