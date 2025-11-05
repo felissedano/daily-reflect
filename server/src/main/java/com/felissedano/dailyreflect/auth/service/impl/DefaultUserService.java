@@ -1,6 +1,7 @@
 package com.felissedano.dailyreflect.auth.service.impl;
 
 import com.felissedano.dailyreflect.auth.AuthUtils;
+import com.felissedano.dailyreflect.auth.UserCreatedEvent;
 import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.UserService;
@@ -10,6 +11,8 @@ import com.felissedano.dailyreflect.auth.domain.model.Role;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import jakarta.transaction.Transactional;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +24,16 @@ public class DefaultUserService implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationService emailVerificationService;
+    private final ApplicationEventPublisher appEventPublisher;
 
-    public DefaultUserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService) {
+    public DefaultUserService(UserRepository userRepository, RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService,
+            ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailVerificationService = emailVerificationService;
+        this.appEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public Optional<User> findUserByEmail(String email) {
-        return  userRepository.findByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -58,19 +65,20 @@ public class DefaultUserService implements UserService {
         System.out.println(roleUser.getName());
         roles.add(roleUser);
 
-        User newUser = new User(userDto.username(),userDto.email(),encryptedPassword, roles);
+        User newUser = new User(userDto.username(), userDto.email(), encryptedPassword, roles);
 
         String verificationToken = AuthUtils.generateVerificationToken();
         newUser.setVerificationCode(verificationToken);
         newUser.setCodeExpiration(AuthUtils.generateTokenExpirationDate());
 
-
-        //TODO MailSender send email
         emailVerificationService.sendVerificationEmail(newUser.getEmail(), newUser.getUsername(), verificationToken);
 
-        return userRepository.save(newUser);
-    }
+        User savedUser = userRepository.save(newUser);
 
+        appEventPublisher.publishEvent(new UserCreatedEvent(this, savedUser));
+
+        return savedUser;
+    }
 
     @Transactional
     @Override
@@ -78,7 +86,7 @@ public class DefaultUserService implements UserService {
         Optional<User> userToDelete = userRepository.findByEmail(email);
 
         if (userToDelete.isEmpty()) {
-            return  false;
+            return false;
         }
         userRepository.delete(userToDelete.get());
         return true;
