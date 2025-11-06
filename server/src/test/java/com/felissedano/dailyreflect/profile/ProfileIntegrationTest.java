@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -30,8 +31,8 @@ public class ProfileIntegrationTest {
     private ProfileRepository profileRepository;
 
     @Test
-    public void whenEmailVerified_aNewProfileShouldBeCreated() {
-        User user =  new User("profileintegration", "profileintegration@test.com", "NOOP");
+    public void whenUserCreated_aNewProfileShouldBeCreated() {
+        User user = new User("profileintegration", "profileintegration@test.com", "NOOP");
         userRepository.saveAndFlush(user);
         publisher.publishEvent(new UserCreatedEvent(this, user));
         assertThat(userRepository.findByEmail("profileintegration@test.com").isPresent()).isTrue();
@@ -40,8 +41,10 @@ public class ProfileIntegrationTest {
 
     @Test
     public void whenSavingProfileWithoutUserReference_shouldFail() {
-        assertThatThrownBy(() -> profileRepository.save(new Profile())).isInstanceOf(DataIntegrityViolationException.class);
-        assertThatThrownBy(() -> profileRepository.save(new Profile(new User()))).isInstanceOf(InvalidDataAccessApiUsageException.class);
+        assertThatThrownBy(() -> profileRepository.save(new Profile()))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> profileRepository.save(new Profile(new User())))
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @Test
@@ -54,6 +57,5 @@ public class ProfileIntegrationTest {
         assertThat(profileRepository.findByUser(user).isPresent()).isFalse();
         assertThat(userRepository.findByEmail("profileintegration2@test.com").isPresent()).isTrue();
     }
-
 
 }
