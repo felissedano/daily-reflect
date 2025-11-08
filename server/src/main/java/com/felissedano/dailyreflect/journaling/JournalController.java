@@ -38,19 +38,25 @@ public class JournalController {
 		this.journalService = journalService;
     }
 
-    @GetMapping("id/{id}")
-    public ResponseEntity<Journal> getJournal(@PathVariable("id") long id) {
-        Optional<Journal> journal = journalRepository.findById(id);
-        return journal.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // @GetMapping("id/{id}")
+    // public ResponseEntity<Journal> getJournal(@PathVariable("id") long id) {
+    //     Optional<Journal> journal = journalRepository.findById(id);
+    //     return journal.map(ResponseEntity::ok)
+    //             .orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
     @GetMapping("date/{date}")
-    public ResponseEntity<Journal> getJournalByDate(
+    public ResponseEntity<JournalDto> getJournalByDate(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        Optional<Journal> journal = journalRepository.findByDate(date);
-        return journal.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        JournalDto journalDto = journalService.getJournalDto(date, principal.getUsername());
+        if (journalDto == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(journalDto);
+        }
     }
 
     @PostMapping("edit")

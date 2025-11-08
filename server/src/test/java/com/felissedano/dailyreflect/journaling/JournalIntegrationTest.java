@@ -1,5 +1,6 @@
 package com.felissedano.dailyreflect.journaling;
 
+import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -183,5 +184,32 @@ public class JournalIntegrationTest {
         assertThat(journal2.getTags()).isEqualTo(Arrays.asList("new tag", "tag3"));
     }
 
+    @Test
+    public void whenUserGetByDateOfExistingJournal_shouldSucceed(){
+        AuthResult authResult = loginUserForTest();
+
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                {
+                    "content": "A brand new journal",
+                    "tags": ["a tag"],
+                    "date": "2025-01-02"
+                }
+
+                """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        given().sessionId(authResult.sessionId()).when()
+            .get("api/journal/date/2025-01-02").then().statusCode(200).body("content", containsString("A brand new journal")).body("date", containsString("2025-01-02"));
+    }
+
     private record AuthResult(String xsrfToken, String sessionId) {}
 }
+

@@ -3,14 +3,16 @@ package com.felissedano.dailyreflect.journaling;
 import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileNotFoundException;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
+import java.util.Date;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/**
- * DefaultJournalService
- */
 @Service
 public class DefaultJournalService implements JournalService {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultJournalService.class);
 
     private final ProfileRepository profileRepository;
     private final JournalRepository journalRepository;
@@ -38,5 +40,21 @@ public class DefaultJournalService implements JournalService {
             curJournal.setTags(journalDto.tags());
             journalRepository.save(curJournal);
         }
+    }
+
+    @Override
+    public JournalDto getJournalDto(Date date, String userEmail) {
+        Profile profile = profileRepository
+                .findByUserEmail(userEmail)
+                .orElseThrow(
+                        () -> new ProfileNotFoundException(
+                                "Profile associated with the user does not exist. Likely something went wrong in the user creation process"));
+
+        Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
+
+        if (journalOpt.isEmpty()) return null;
+        Journal journal = journalOpt.get();
+
+        return new JournalDto(journal.getContent(), journal.getTags(), journal.getDate());
     }
 }
