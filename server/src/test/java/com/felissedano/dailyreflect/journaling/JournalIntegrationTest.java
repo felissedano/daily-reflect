@@ -1,6 +1,5 @@
 package com.felissedano.dailyreflect.journaling;
 
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +20,7 @@ import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import org.junit.jupiter.api.AfterEach;
@@ -139,13 +139,12 @@ public class JournalIntegrationTest {
                 .cookie("XSRF-TOKEN", authResult.xsrfToken())
                 .body(
                         """
-                {
-                    "content": "HELLO!!!",
-                    "tags": ["tag1", "tag2", "tag3"],
-                    "date": "2025-01-01"
-                }
-
-                """)
+                        {
+                            "content": "HELLO!!!",
+                            "tags": ["tag1", "tag2", "tag3"],
+                            "date": "2025-01-01"
+                        }
+                        """)
                 .when()
                 .post("api/journal/edit")
                 .then()
@@ -155,9 +154,9 @@ public class JournalIntegrationTest {
         Date date = getDateFromString("2025-01-01", true);
 
         Journal journal = journalRepository
-                .findByDateAndProfile(getDateFromString("2025-01-01", true), profile)
+                .findByDateAndProfile(LocalDate.of(2025, 1, 1), profile)
                 .get();
-        assertThat(journal.getDate()).hasSameTimeAs(date);
+        assertThat(journal.getDate()).isEqualTo("2025-01-01");
         assertThat(journal.getContent()).isEqualTo("HELLO!!!");
 
         // Test update journal works
@@ -185,7 +184,7 @@ public class JournalIntegrationTest {
     }
 
     @Test
-    public void whenUserGetByDateOfExistingJournal_shouldSucceed(){
+    public void whenUserGetByDateOfExistingJournal_shouldSucceed() {
         AuthResult authResult = loginUserForTest();
 
         given().sessionId(authResult.sessionId)
@@ -206,10 +205,14 @@ public class JournalIntegrationTest {
                 .then()
                 .statusCode(201);
 
-        given().sessionId(authResult.sessionId()).when()
-            .get("api/journal/date/2025-01-02").then().statusCode(200).body("content", containsString("A brand new journal")).body("date", containsString("2025-01-02"));
+        given().sessionId(authResult.sessionId())
+                .when()
+                .get("api/journal/date/2025-01-02")
+                .then()
+                .statusCode(200)
+                .body("content", containsString("A brand new journal"))
+                .body("date", containsString("2025-01-02"));
     }
 
     private record AuthResult(String xsrfToken, String sessionId) {}
 }
-

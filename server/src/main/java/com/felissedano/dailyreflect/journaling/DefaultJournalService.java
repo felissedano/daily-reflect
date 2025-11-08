@@ -3,6 +3,8 @@ package com.felissedano.dailyreflect.journaling;
 import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileNotFoundException;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -43,7 +45,7 @@ public class DefaultJournalService implements JournalService {
     }
 
     @Override
-    public JournalDto getJournalDto(Date date, String userEmail) {
+    public JournalDto getJournalDto(LocalDate date, String userEmail) {
         Profile profile = profileRepository
                 .findByUserEmail(userEmail)
                 .orElseThrow(

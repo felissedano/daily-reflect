@@ -2,6 +2,8 @@ package com.felissedano.dailyreflect.journaling;
 
 import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -47,7 +49,7 @@ public class JournalController {
 
     @GetMapping("date/{date}")
     public ResponseEntity<JournalDto> getJournalByDate(
-            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -81,7 +83,7 @@ public class JournalController {
 
         ArrayList<String> tagList = new ArrayList<>();
         tagList.addAll(Arrays.asList(new String[] {"feeling good", "cat", "!@#$"}));
-        Journal journal = new Journal(new Date(System.currentTimeMillis()), content, tagList, profile);
+        Journal journal = new Journal(LocalDate.of(2025, 1, 1), content, tagList, profile);
         // new ArrayList<>(), null);
         Journal savedJournal = journalRepository.save(journal);
         return ResponseEntity.ok(savedJournal);

@@ -13,9 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,7 +32,7 @@ public class Journal {
 
     @Column(name = "date", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    private LocalDate date;
 
     @Column(name = "content", nullable = true)
     private String content;
@@ -56,7 +56,7 @@ public class Journal {
 
     public Journal() {}
 
-    public Journal(Date date, String content, ArrayList<String> tags, Profile profile) {
+    public Journal(LocalDate date, String content, ArrayList<String> tags, Profile profile) {
         this.date = date;
 
         this.content = content;
@@ -68,7 +68,7 @@ public class Journal {
         return id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -80,17 +80,17 @@ public class Journal {
         return tags;
     }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
-	}
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
 
     @Override
     public String toString() {
