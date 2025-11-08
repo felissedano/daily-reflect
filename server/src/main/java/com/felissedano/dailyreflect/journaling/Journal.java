@@ -1,16 +1,6 @@
 package com.felissedano.dailyreflect.journaling;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.felissedano.dailyreflect.profile.Profile;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -23,6 +13,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -50,15 +47,14 @@ public class Journal {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(name = "profile_journals",
+    @JoinTable(
+            name = "profile_journals",
             joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "journal_id", referencedColumnName = "id"),
-            indexes = @Index(columnList = "profile_id")
-    )
+            indexes = @Index(columnList = "profile_id"))
     private Profile profile;
 
-    public Journal() {
-    }
+    public Journal() {}
 
     public Journal(Date date, String content, ArrayList<String> tags, Profile profile) {
         this.date = date;
@@ -84,13 +80,20 @@ public class Journal {
         return tags;
     }
 
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setTags(ArrayList<String> tags) {
+		this.tags = tags;
+	}
+
     @Override
     public String toString() {
-        return "Journal{" +
-                "id=" + id +
-                ", date=" + date +
-                ", content='" + content + "'" +
-                ", tags=" + tags +
-                "}";
+        return "Journal{" + "id=" + id + ", date=" + date + ", content='" + content + "'" + ", tags=" + tags + "}";
     }
 }
