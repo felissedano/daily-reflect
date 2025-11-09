@@ -214,5 +214,31 @@ public class JournalIntegrationTest {
                 .body("date", containsString("2025-01-02"));
     }
 
+    @Test
+    public void whenUserGetByDateOfNonExistingJournal_shouldFail() {
+        AuthResult authResult = loginUserForTest();
+
+        given().sessionId(authResult.sessionId())
+                .header(new Header("Accept-Language", "en"))
+                .when()
+                .get("api/journal/date/1970-12-31")
+                .then()
+                .statusCode(404)
+                .body("title", containsString("Journal Not Found"))
+                .body("type", containsString("/problems/journal/profile-not-found"))
+                .body("detail", containsString("Journal associated with the user not found."));
+        ;
+
+        given().sessionId(authResult.sessionId())
+                .header(new Header("Accept-Language", "fr"))
+                .when()
+                .get("api/journal/date/1970-12-31")
+                .then()
+                .statusCode(404)
+                .body("title", containsString("Journal Not Found"))
+                .body("type", containsString("/problems/journal/profile-not-found"))
+                .body("detail", containsString("Journal associé à cet utilisateur introuvable."));
+    }
+
     private record AuthResult(String xsrfToken, String sessionId) {}
 }

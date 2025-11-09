@@ -54,7 +54,7 @@ public class DefaultJournalService implements JournalService {
 
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
 
-        if (journalOpt.isEmpty()) return null;
+        if (journalOpt.isEmpty()) throw new JournalNotFoundException("Journal associated with this user and date not found");
         Journal journal = journalOpt.get();
 
         return new JournalDto(journal.getContent(), journal.getTags(), journal.getDate());

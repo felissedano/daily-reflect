@@ -54,11 +54,7 @@ public class JournalController {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         JournalDto journalDto = journalService.getJournalDto(date, principal.getUsername());
-        if (journalDto == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(journalDto);
-        }
+        return ResponseEntity.ok(journalDto);
     }
 
     @PostMapping("edit")
