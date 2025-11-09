@@ -2,21 +2,19 @@ package com.felissedano.dailyreflect.auth.service.impl;
 
 import com.felissedano.dailyreflect.auth.AuthUtils;
 import com.felissedano.dailyreflect.auth.UserCreatedEvent;
-import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
-import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
-import com.felissedano.dailyreflect.auth.service.UserService;
-import com.felissedano.dailyreflect.auth.service.dto.UserDto;
-import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import com.felissedano.dailyreflect.auth.domain.model.Role;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
+import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
+import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
+import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
+import com.felissedano.dailyreflect.auth.service.UserService;
+import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import jakarta.transaction.Transactional;
-
+import java.util.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class DefaultUserService implements UserService {
@@ -26,8 +24,11 @@ public class DefaultUserService implements UserService {
     private final EmailVerificationService emailVerificationService;
     private final ApplicationEventPublisher appEventPublisher;
 
-    public DefaultUserService(UserRepository userRepository, RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder, EmailVerificationService emailVerificationService,
+    public DefaultUserService(
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder,
+            EmailVerificationService emailVerificationService,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;

@@ -64,7 +64,8 @@ public class JournalController {
     }
 
     @DeleteMapping("date/{date}")
-    public ResponseEntity<Void> deleteJournal(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<Void> deleteJournal(
+            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

@@ -11,13 +11,12 @@ import com.felissedano.dailyreflect.auth.service.dto.PasswordChangeDTO;
 import com.felissedano.dailyreflect.auth.service.dto.PasswordResetDTO;
 import com.felissedano.dailyreflect.common.service.MailService;
 import jakarta.transaction.Transactional;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class DefaultPasswordService implements PasswordService {
@@ -30,10 +29,12 @@ public class DefaultPasswordService implements PasswordService {
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
 
-    public DefaultPasswordService(UserRepository userRepository,
-                                  MailService mailService,
-                                  PasswordResetTokenRepository passwordResetTokenRepository,
-                                  PasswordEncoder passwordEncoder, Environment environment) {
+    public DefaultPasswordService(
+            UserRepository userRepository,
+            MailService mailService,
+            PasswordResetTokenRepository passwordResetTokenRepository,
+            PasswordEncoder passwordEncoder,
+            Environment environment) {
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -52,7 +53,7 @@ public class DefaultPasswordService implements PasswordService {
 
         User user = optionalUser.get();
 
-        //Delete any previous reset token if exists
+        // Delete any previous reset token if exists
         Optional<PasswordResetToken> oldResetToken = passwordResetTokenRepository.findByUserEmail(email);
         if (oldResetToken.isPresent()) {
             log.info("Old token present");
@@ -60,7 +61,6 @@ public class DefaultPasswordService implements PasswordService {
         }
 
         String token = UUID.randomUUID().toString();
-
 
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setToken(token);
@@ -73,14 +73,14 @@ public class DefaultPasswordService implements PasswordService {
                 email,
                 "auth.password.mail.reset-password.subject",
                 "auth.password.mail.reset-password.content",
-                new String[]{link}
-        );
+                new String[] {link});
     }
 
     @Override
     @Transactional
     public void resetPassword(PasswordResetDTO passwordResetDTO) {
-        Optional<PasswordResetToken> optionalResetToken = passwordResetTokenRepository.findByUserEmail(passwordResetDTO.email());
+        Optional<PasswordResetToken> optionalResetToken =
+                passwordResetTokenRepository.findByUserEmail(passwordResetDTO.email());
         if (optionalResetToken.isEmpty()) {
             throw new TokenExpiredOrInvalidException("password reset toke expired");
         }
@@ -109,7 +109,7 @@ public class DefaultPasswordService implements PasswordService {
 
     @Override
     public boolean changePassword(PasswordChangeDTO passwordChangeDTO) {
-        //TODO
+        // TODO
         throw new UnsupportedOperationException();
     }
 }

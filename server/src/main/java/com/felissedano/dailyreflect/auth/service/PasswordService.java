@@ -10,7 +10,4 @@ public interface PasswordService {
     public void resetPassword(PasswordResetDTO passwordResetDTO);
 
     public boolean changePassword(PasswordChangeDTO passwordChangeDTO);
-
-
-
 }

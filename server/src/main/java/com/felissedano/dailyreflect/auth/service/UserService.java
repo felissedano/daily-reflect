@@ -3,7 +3,6 @@ package com.felissedano.dailyreflect.auth.service;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 

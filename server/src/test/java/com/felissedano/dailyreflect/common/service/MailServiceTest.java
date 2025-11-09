@@ -1,17 +1,19 @@
 package com.felissedano.dailyreflect.common.service;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -19,21 +21,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.IOException;
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.*;
-
-
 @SpringBootTest
 @ActiveProfiles("test")
 @Import(TestContainerConfiguration.class)
 public class MailServiceTest {
 
-
     static GreenMail greenMail = new GreenMail(ServerSetup.SMTP.port(3025))
             .withConfiguration(new GreenMailConfiguration().withUser("admin@example.com", "password"));
-
 
     @Autowired
     private JavaMailSender mailSender;
@@ -59,7 +53,6 @@ public class MailServiceTest {
         message.setTo("john@example.com");
         message.setSubject("Hello World!");
         message.setText("Some content.");
-
 
         // Send the email
         mailSender.send(message);
@@ -88,8 +81,5 @@ public class MailServiceTest {
         } catch (MessagingException | IOException e) {
             throw new RuntimeException(e);
         }
-
-
     }
-
 }

@@ -1,5 +1,8 @@
 package com.felissedano.dailyreflect.profile;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.UserCreatedEvent;
 import com.felissedano.dailyreflect.auth.domain.model.User;
@@ -12,9 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestContainerConfiguration.class)
@@ -35,7 +35,8 @@ public class ProfileIntegrationTest {
         User user = new User("profileintegration", "profileintegration@test.com", "NOOP");
         userRepository.saveAndFlush(user);
         publisher.publishEvent(new UserCreatedEvent(this, user));
-        assertThat(userRepository.findByEmail("profileintegration@test.com").isPresent()).isTrue();
+        assertThat(userRepository.findByEmail("profileintegration@test.com").isPresent())
+                .isTrue();
         assertThat(profileRepository.findByUser(user).isPresent()).isTrue();
     }
 
@@ -55,7 +56,7 @@ public class ProfileIntegrationTest {
         profileRepository.save(profile);
         profileRepository.delete(profile);
         assertThat(profileRepository.findByUser(user).isPresent()).isFalse();
-        assertThat(userRepository.findByEmail("profileintegration2@test.com").isPresent()).isTrue();
+        assertThat(userRepository.findByEmail("profileintegration2@test.com").isPresent())
+                .isTrue();
     }
-
 }

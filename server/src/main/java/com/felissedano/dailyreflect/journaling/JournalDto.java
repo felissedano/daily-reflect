@@ -1,6 +1,5 @@
 package com.felissedano.dailyreflect.journaling;
 
-import java.util.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 

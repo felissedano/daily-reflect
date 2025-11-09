@@ -1,13 +1,14 @@
 package com.felissedano.dailyreflect.auth.web;
 
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.PasswordService;
+import com.felissedano.dailyreflect.auth.service.UserService;
 import com.felissedano.dailyreflect.auth.service.dto.LoginDto;
 import com.felissedano.dailyreflect.auth.service.dto.PasswordResetDTO;
 import com.felissedano.dailyreflect.auth.service.dto.UserDto;
-import com.felissedano.dailyreflect.auth.domain.model.User;
-import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
-import com.felissedano.dailyreflect.auth.service.UserService;
 import com.felissedano.dailyreflect.common.GenericResponseDTO;
+import java.util.Optional;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @Validated
@@ -39,11 +38,13 @@ public class AuthController {
 
     final MessageSource messageSource;
 
-    public AuthController(AuthenticationManager authenticationManager,
-                          PasswordEncoder passwordEncoder,
-                          UserService userService,
-                          EmailVerificationService emailVerificationService, PasswordService passwordService, MessageSource messageSource
-    ) {
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder,
+            UserService userService,
+            EmailVerificationService emailVerificationService,
+            PasswordService passwordService,
+            MessageSource messageSource) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.emailVerificationService = emailVerificationService;
@@ -59,10 +60,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<GenericResponseDTO> login(@RequestBody LoginDto loginDTO) {
         System.out.println("AUTHENTICATING");
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new ResponseEntity<>(new GenericResponseDTO(201,true, "Login Successful"), HttpStatusCode.valueOf(201));
+        return new ResponseEntity<>(new GenericResponseDTO(201, true, "Login Successful"), HttpStatusCode.valueOf(201));
     }
 
     @PostMapping("/register")
@@ -92,7 +94,8 @@ public class AuthController {
     public ResponseEntity<GenericResponseDTO> resendVerificationToken(@RequestParam String email) {
         boolean isSend = emailVerificationService.resendVerificationEmail(email);
         if (isSend) {
-            String message = messageSource.getMessage("auth.email.resend-token-success", null, LocaleContextHolder.getLocale());
+            String message =
+                    messageSource.getMessage("auth.email.resend-token-success", null, LocaleContextHolder.getLocale());
             GenericResponseDTO response = new GenericResponseDTO(201, true, message);
             return new ResponseEntity<>(response, HttpStatus.valueOf(201));
         }
@@ -102,11 +105,10 @@ public class AuthController {
     @PostMapping("/get-reset-password-link")
     public ResponseEntity<GenericResponseDTO> sendResetPasswordEmail(@RequestParam String email) {
         passwordService.sendResetPasswordEmail(email);
-        String message = messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
+        String message =
+                messageSource.getMessage("auth.password.send-link-success", null, LocaleContextHolder.getLocale());
         GenericResponseDTO response = new GenericResponseDTO(201, true, message);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(201));
-
-
     }
 
     @PostMapping("/reset-password")
@@ -126,8 +128,7 @@ public class AuthController {
         System.out.println("USER IS " + isAuth + " " + authentication.getName());
         return ResponseEntity.ok(isAuth);
 
-//        return ResponseEntity.ok(new GenericResponseDTO(200, true, );
+        //        return ResponseEntity.ok(new GenericResponseDTO(200, true, );
 
     }
-
 }

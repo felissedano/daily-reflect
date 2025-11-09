@@ -5,6 +5,7 @@ import com.felissedano.dailyreflect.auth.domain.model.Role;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
+import java.util.HashSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.HashSet;
-
 @DataJpaTest
 @Import(TestContainerConfiguration.class)
-//@TestPropertySource(locations = "classpath:application-test.properties")
+// @TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 public class UserAndRoleTest {
 
@@ -24,9 +23,7 @@ public class UserAndRoleTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    public void setup() {
-
-    }
+    public void setup() {}
 
     @Test
     public void whenCreateNewUserWithAdminRole_UserShouldHaveUserAndRoleShouldIncludeAdmin() {
@@ -39,11 +36,9 @@ public class UserAndRoleTest {
 
         alice.setRoles(adminAndUser);
 
-        assert(alice.getRoles().contains(admin));
+        assert (alice.getRoles().contains(admin));
 
-//        userRepository.save(alice);
-
-
+        //        userRepository.save(alice);
 
     }
 }

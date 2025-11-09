@@ -3,13 +3,12 @@ package com.felissedano.dailyreflect.auth.domain.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -43,22 +42,21 @@ public class User {
     @Column(name = "code_expiration", nullable = true)
     private Date codeExpiration;
 
-
     @CreatedDate
     private LocalDateTime createdDate;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-            indexes = @Index(columnList = "role_id")
-    )
+            indexes = @Index(columnList = "role_id"))
     private Set<Role> roles;
-
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -82,9 +80,8 @@ public class User {
         this.roles = roles;
         this.isEnabled = isEnabled;
     }
-    public User() {
 
-    }
+    public User() {}
 
     public long getId() {
         return id;
