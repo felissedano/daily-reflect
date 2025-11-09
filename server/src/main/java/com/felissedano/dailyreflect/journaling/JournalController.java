@@ -1,52 +1,89 @@
 package com.felissedano.dailyreflect.journaling;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.felissedano.dailyreflect.profile.Profile;
+import com.felissedano.dailyreflect.profile.ProfileRepository;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/journal")
 public class JournalController {
 
-    @Autowired
-    JournalRepository journalRepository;
+    public static final Logger log = LoggerFactory.getLogger(JournalController.class);
 
-    @GetMapping("id/{id}")
-    public ResponseEntity<Journal> getJournal(@PathVariable("id") long id) {
-        Optional<Journal> journal = journalRepository.findById(id);
-        return journal.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    final JournalRepository journalRepository;
+
+    final ProfileRepository profileRepository;
+
+    final JournalService journalService;
+
+    public JournalController(
+            JournalRepository journalRepository, ProfileRepository profileRepository, JournalService journalService) {
+        this.journalRepository = journalRepository;
+        this.profileRepository = profileRepository;
+        this.journalService = journalService;
     }
+
+    // @GetMapping("id/{id}")
+    // public ResponseEntity<Journal> getJournal(@PathVariable("id") long id) {
+    //     Optional<Journal> journal = journalRepository.findById(id);
+    //     return journal.map(ResponseEntity::ok)
+    //             .orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
     @GetMapping("date/{date}")
-    public ResponseEntity<Journal> getJournalByDate(
-            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date
-    ) {
-        Optional<Journal> journal = journalRepository.findByDate(date);
-        return journal.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<JournalDto> getJournalByDate(
+            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        JournalDto journalDto = journalService.getJournalDto(date, principal.getUsername());
+        return ResponseEntity.ok(journalDto);
     }
 
-    @PostMapping("add")
-    public Journal addJournal(@RequestBody Journal journal) {
-        return journalRepository.save(journal);
+    @PostMapping("edit")
+    public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        journalService.createOrUpdateJournal(journalDto, principal.getUsername());
+        ;
+        return ResponseEntity.status(201).build();
     }
 
-    @DeleteMapping("{id}")
-    public void deleteJournal(@PathVariable("id") long id) {
-        journalRepository.deleteById(id);
+    @DeleteMapping("date/{date}")
+    public ResponseEntity<Void> deleteJournal(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        journalService.deleteJournal(date, principal.getUsername());
+        return ResponseEntity.status(204).build();
     }
 
     @GetMapping("mock/{content}")
     public ResponseEntity<Journal> addMockJournal(@PathVariable String content) {
-        Journal journal = new Journal(new Date(System.currentTimeMillis()), content, new ArrayList<>());
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Profile profile =
+                profileRepository.findByUserEmail(principal.getUsername()).orElseThrow();
+
+        ArrayList<String> tagList = new ArrayList<>();
+        tagList.addAll(Arrays.asList(new String[] {"feeling good", "cat", "!@#$"}));
+        Journal journal = new Journal(LocalDate.of(2025, 1, 1), content, tagList, profile);
+        // new ArrayList<>(), null);
         Journal savedJournal = journalRepository.save(journal);
         return ResponseEntity.ok(savedJournal);
-
     }
-
-
 }

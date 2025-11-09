@@ -1,14 +1,15 @@
 package com.felissedano.dailyreflect.journaling;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Date;
+import com.felissedano.dailyreflect.profile.Profile;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JournalRepository extends JpaRepository<Journal, Long> {
     List<Journal> findAllByOrderByDateDesc();
 
-    Optional<Journal> findByDate(Date date);
+    Optional<Journal> findByDate(LocalDate date);
 
+    Optional<Journal> findByDateAndProfile(LocalDate date, Profile profile);
 }

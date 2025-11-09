@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 
-import java.util.Locale;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
