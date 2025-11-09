@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -193,13 +194,13 @@ public class JournalIntegrationTest {
                 .cookie("XSRF-TOKEN", authResult.xsrfToken())
                 .body(
                         """
-                {
-                    "content": "A brand new journal",
-                    "tags": ["a tag"],
-                    "date": "2025-01-02"
-                }
+                        {
+                            "content": "A brand new journal",
+                            "tags": ["a tag"],
+                            "date": "2025-01-02"
+                        }
 
-                """)
+                        """)
                 .when()
                 .post("api/journal/edit")
                 .then()
@@ -227,7 +228,6 @@ public class JournalIntegrationTest {
                 .body("title", containsString("Journal Not Found"))
                 .body("type", containsString("/problems/journal/profile-not-found"))
                 .body("detail", containsString("Journal associated with the user not found."));
-        ;
 
         given().sessionId(authResult.sessionId())
                 .header(new Header("Accept-Language", "fr"))
@@ -238,6 +238,71 @@ public class JournalIntegrationTest {
                 .body("title", containsString("Journal Not Found"))
                 .body("type", containsString("/problems/journal/profile-not-found"))
                 .body("detail", containsString("Journal associé à cet utilisateur introuvable."));
+    }
+
+    @Test
+    public void whenUserDeleteJournalByDateWithExistingJournal_shouldSucceed() {
+        AuthResult authResult = loginUserForTest();
+
+        // Create a journal
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                        {
+                            "content": "A journal waiting to be deleted",
+                            "tags": ["a tag"],
+                            "date": "2025-02-02"
+                        }
+
+                        """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        // Check that the journal exists
+        given().sessionId(authResult.sessionId())
+                .when()
+                .get("api/journal/date/2025-02-02")
+                .then()
+                .statusCode(200)
+                .body("content", containsString("A journal waiting to be deleted"))
+                .body("date", containsString("2025-02-02"));
+
+        // Check that it exists from the backend directly as well
+        Profile profile = profileRepository.findByUserEmail(user.getEmail()).get();
+        Journal journal = journalRepository
+                .findByDateAndProfile(LocalDate.of(2025, 2, 2), profile)
+                .get();
+        assertThat(journal.getDate()).isEqualTo("2025-02-02");
+        assertThat(journal.getContent()).isEqualTo("A journal waiting to be deleted");
+
+        // Delete the journal
+        given().sessionId(authResult.sessionId)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .when()
+                .delete("api/journal/date/2025-02-02")
+                .then()
+                .statusCode(204);
+
+        // Check that getting journal results in a 404 code
+        given().sessionId(authResult.sessionId())
+                .header(new Header("Accept-Language", "en"))
+                .when()
+                .get("api/journal/date/2025-02-02")
+                .then()
+                .statusCode(404)
+                .body("title", containsString("Journal Not Found"))
+                .body("type", containsString("/problems/journal/profile-not-found"))
+                .body("detail", containsString("Journal associated with the user not found."));
+
+        // Check that the journal also does not exist in the backend anymore
+        Optional<Journal> journalDelOpt = journalRepository.findByDateAndProfile(LocalDate.of(2025, 2, 2), profile);
+        assertThat(journalDelOpt.isEmpty());
     }
 
     private record AuthResult(String xsrfToken, String sessionId) {}

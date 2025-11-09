@@ -2,12 +2,9 @@ package com.felissedano.dailyreflect.journaling;
 
 import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,10 +31,11 @@ public class JournalController {
 
     final JournalService journalService;
 
-    public JournalController(JournalRepository journalRepository, ProfileRepository profileRepository, JournalService journalService) {
+    public JournalController(
+            JournalRepository journalRepository, ProfileRepository profileRepository, JournalService journalService) {
         this.journalRepository = journalRepository;
         this.profileRepository = profileRepository;
-		this.journalService = journalService;
+        this.journalService = journalService;
     }
 
     // @GetMapping("id/{id}")
@@ -50,7 +48,6 @@ public class JournalController {
     @GetMapping("date/{date}")
     public ResponseEntity<JournalDto> getJournalByDate(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         JournalDto journalDto = journalService.getJournalDto(date, principal.getUsername());
@@ -61,13 +58,18 @@ public class JournalController {
     public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        journalService.createOrUpdateJournal(journalDto, principal.getUsername());;
+        journalService.createOrUpdateJournal(journalDto, principal.getUsername());
+        ;
         return ResponseEntity.status(201).build();
     }
 
-    @DeleteMapping("{id}")
-    public void deleteJournal(@PathVariable("id") long id) {
-        journalRepository.deleteById(id);
+    @DeleteMapping("date/{date}")
+    public ResponseEntity<Void> deleteJournal(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        journalService.deleteJournal(date, principal.getUsername());
+        return ResponseEntity.status(204).build();
     }
 
     @GetMapping("mock/{content}")
