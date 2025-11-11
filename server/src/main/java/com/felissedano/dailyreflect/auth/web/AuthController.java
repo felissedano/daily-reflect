@@ -59,7 +59,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<GenericResponseDTO> login(@RequestBody LoginDto loginDTO) {
-        System.out.println("AUTHENTICATING");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,13 +67,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Optional<User>> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<Boolean> register(@RequestBody UserDto userDto) {
         if (userService.checkIfUserNotExists(userDto)) {
-            User user = userService.registerNormalUser(userDto);
-            return new ResponseEntity<>(Optional.of(user), HttpStatusCode.valueOf(201));
+            userService.registerNormalUser(userDto);
+            return new ResponseEntity<>(true, HttpStatusCode.valueOf(201));
 
         } else {
-            return new ResponseEntity<>(Optional.empty(), HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(false, HttpStatusCode.valueOf(404));
         }
     }
 
@@ -125,10 +124,6 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuth;
         isAuth = !(authentication instanceof AnonymousAuthenticationToken);
-        System.out.println("USER IS " + isAuth + " " + authentication.getName());
         return ResponseEntity.ok(isAuth);
-
-        //        return ResponseEntity.ok(new GenericResponseDTO(200, true, );
-
     }
 }

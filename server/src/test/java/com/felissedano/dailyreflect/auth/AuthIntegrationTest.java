@@ -101,9 +101,7 @@ public class AuthIntegrationTest {
                 .when()
                 .post("api/auth/register")
                 .then()
-                .statusCode(201)
-                .body("enabled", equalTo(false))
-                .body("email", equalTo("john@example.com"));
+                .statusCode(201);
     }
 
     @Test
