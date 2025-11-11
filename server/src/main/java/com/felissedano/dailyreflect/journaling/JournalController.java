@@ -3,8 +3,11 @@ package com.felissedano.dailyreflect.journaling;
 import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -54,14 +57,6 @@ public class JournalController {
         return ResponseEntity.ok(journalDto);
     }
 
-    @PostMapping("edit")
-    public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
-        UserDetails principal = (UserDetails)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        journalService.createOrUpdateJournal(journalDto, principal.getUsername());
-        ;
-        return ResponseEntity.status(201).build();
-    }
 
     @DeleteMapping("date/{date}")
     public ResponseEntity<Void> deleteJournal(
@@ -71,6 +66,25 @@ public class JournalController {
 
         journalService.deleteJournal(date, principal.getUsername());
         return ResponseEntity.status(204).build();
+    }
+
+    @GetMapping("year-month/{yearMonth}") 
+    public ResponseEntity<List<JournalDto>> getJournals(@PathVariable("yearMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<JournalDto> journalDtos = journalService.getJournalsByYearMonth(yearMonth, principal.getUsername());
+
+        return ResponseEntity.ok(journalDtos);
+    }
+
+
+    @PostMapping("edit")
+    public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
+        UserDetails principal = (UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        journalService.createOrUpdateJournal(journalDto, principal.getUsername());
+        return ResponseEntity.status(201).build();
     }
 
     @GetMapping("mock/{content}")

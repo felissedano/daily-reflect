@@ -21,6 +21,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -303,6 +304,57 @@ public class JournalIntegrationTest {
         // Check that the journal also does not exist in the backend anymore
         Optional<Journal> journalDelOpt = journalRepository.findByDateAndProfile(LocalDate.of(2025, 2, 2), profile);
         assertThat(journalDelOpt.isEmpty());
+    }
+
+    @Test
+    public void whenGetJournalsOfAYearMonth_shouldGetTheJournals() {
+        AuthResult authResult = loginUserForTest();
+
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                        {
+                            "content": "Journal for march 1st",
+                            "tags": ["a tag"],
+                            "date": "2025-03-01"
+                        }
+                        """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                        {
+                            "content": "Journal for march 31st",
+                            "tags": ["a tag"],
+                            "date": "2025-03-31"
+                        }
+                        """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        JournalDto[] journalDtos = given().sessionId(authResult.sessionId())
+                .when()
+                .get("api/journal/year-month/2025-03")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(JournalDto[].class);
+
+        assertThat(journalDtos.length).isIn(2);
+        assertThat(journalDtos[0].content().contains("Journal for march"));
     }
 
     private record AuthResult(String xsrfToken, String sessionId) {}

@@ -12,4 +12,6 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     Optional<Journal> findByDate(LocalDate date);
 
     Optional<Journal> findByDateAndProfile(LocalDate date, Profile profile);
+
+    List<Journal> findByProfileAndDateBetween(Profile profile, LocalDate start, LocalDate end);
 }
