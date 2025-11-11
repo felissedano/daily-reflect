@@ -34,8 +34,8 @@ export class LoginPageComponent {
   loginErrorMessage: string | null = null;
 
   onSubmit() {
-    console.log(this.loginForm.controls)
-    console.log(this.loginForm.value)
+    // console.log(this.loginForm.controls)
+    // console.log(this.loginForm.value)
     if (this.loginForm.invalid) {
       return
     }
