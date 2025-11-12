@@ -1,5 +1,5 @@
 export interface Journal {
-  date: Date,
-  content: string,
-  labels: string[],
+  date: Date;
+  content: string;
+  tags: string[];
 }

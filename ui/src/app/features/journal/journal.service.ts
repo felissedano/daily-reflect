@@ -1,55 +1,54 @@
 import { Injectable } from '@angular/core';
-import {delay, Observable, of} from "rxjs";
-import {Journal} from "./journal.model";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "../../../environments/environment";
+import { map, Observable } from 'rxjs';
+import { Journal } from './journal.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { stringfyDate, stringfyYearMonth } from '../../shared/util/dateUtil';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JournalService {
-
   private API_URL = environment.baseUrl;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
-  private mockJournals: Journal[] = [
-    {
-      date: new Date(new Date().getFullYear(), new Date().getMonth(), 20),
-      labels: ['neutral', 'quiet day'],
-      content: "I wish something interesting happened"
-    },
-    {
-      date: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 18),
-      labels: [],
-      content: "What a day"
-    },
-    {
-      date: new Date(new Date().getFullYear(), new Date().getMonth(), 13),
-      labels: ['happy'],
-      content: "Today was one of the day of all time"
-    }
-  ];
-
-  getJournalOfMonth(year: number, month: number): Observable<Journal[]> {
-    // TODO replace mock with actual logic
-    const filteredJournal = this.mockJournals.filter(journal => {
-      console.log(journal.date)
-      console.log(journal.date.getFullYear(), year, journal.date.getMonth(), month)
-      return journal.date.getFullYear() === year &&
-        journal.date.getMonth() === month;
-    });
-
-    return of(filteredJournal).pipe(delay(300));
+  getJournalByDate(date: Date): Observable<Journal> {
+    const dateString: string = stringfyDate(date);
+    return this.httpClient.get<Journal>(
+      this.API_URL + 'api/journal/date/' + dateString,
+    );
   }
 
-  getJournalOfDay(year: number, month: number, day: number): Observable<Journal> {
-    if (day % 2 == 0) {
-      return of({content: "", labels: [], date: new Date(year,month + 1, day)}).pipe(delay(100));
-    } else {
-      const mockJournal: Journal = {date: new Date(year,month + 1, day), labels: ['some labels', "achievement"], content: "Won a prize today"};
-      return of(mockJournal).pipe(delay(100));
-    }
+  getJournalByYearMonth(year: number, month: number): Observable<Journal[]> {
+    const yearMonthString: string = stringfyYearMonth(year, month);
+    return this.httpClient
+      .get<
+        { content: string; tags: string[]; date: string }[]
+      >(this.API_URL + 'api/journal/year-month/' + yearMonthString)
+      .pipe(
+        map((journalObjs) =>
+          journalObjs.map((journalObj) => ({
+            content: journalObj.content,
+            tags: journalObj.tags,
+            date: new Date(journalObj.date),
+          })),
+        ),
+      );
+  }
 
+  saveJournal(journal: Journal): Observable<Journal> {
+    const headers: HttpHeaders = new HttpHeaders().set(
+      'content-type',
+      'application/json',
+    );
+
+    return this.httpClient.post<Journal>(
+      this.API_URL + 'api/journal/edit',
+      journal,
+      {
+        headers: headers,
+      },
+    );
   }
 }

@@ -1,99 +1,163 @@
-import {Component, OnInit} from '@angular/core';
-import {MainLayoutComponent} from "../../../../core/layout/main-layout/main-layout.component";
-import {AuthService} from "../../../../core/auth/auth.service";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatFormField} from "@angular/material/form-field";
-import {MatInput} from "@angular/material/input";
-import {TranslatePipe} from "@ngx-translate/core";
-import {MatIcon} from "@angular/material/icon";
-import {DatePipe} from "@angular/common";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {CalendarPopupComponent} from "../../calendar-popup/calendar-popup.component";
-import {ActivatedRoute, Router} from "@angular/router";
-import {JournalService} from "../../journal.service";
-import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { MainLayoutComponent } from '../../../../core/layout/main-layout/main-layout.component';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
+import { MatIcon } from '@angular/material/icon';
+import { DatePipe } from '@angular/common';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { CalendarPopupComponent } from '../../calendar-popup/calendar-popup.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { JournalService } from '../../journal.service';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Journal } from '../../journal.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemDetails } from '../../../../core/model/problem-details';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-journal-page',
-  imports: [MainLayoutComponent, MatButton, MatFormField, MatInput, TranslatePipe, MatIcon, DatePipe, MatIconButton, ReactiveFormsModule],
+  imports: [
+    MainLayoutComponent,
+    MatButton,
+    MatFormField,
+    MatInput,
+    TranslatePipe,
+    MatIcon,
+    DatePipe,
+    MatIconButton,
+    ReactiveFormsModule,
+  ],
   templateUrl: './journal-page.component.html',
-  styleUrl: './journal-page.component.scss'
+  styleUrl: './journal-page.component.scss',
 })
 export class JournalPageComponent implements OnInit {
-
-  constructor(private authService: AuthService,
-              private journalService: JournalService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private dialog: MatDialog) {
-  }
+  constructor(
+    private authService: AuthService,
+    private journalService: JournalService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog,
+    private matSnackBar: MatSnackBar,
+  ) {}
 
   currentSelectedDate: Date = new Date();
 
   journalForm = new FormGroup({
-    content: new FormControl<string>(""),
-    labels: new FormControl<string[]>([])
-  })
+    content: new FormControl<string>(''),
+    tags: new FormControl<string[]>([]),
+  });
 
   ngOnInit(): void {
-
     // If no queryParam then display current local date
     if (this.route.snapshot.queryParamMap.keys.length === 0) {
-      console.log("no params")
       this.currentSelectedDate = new Date();
-    } else { //Get date from param and check if it's valid
-      console.log("yes params")
-      const yearString: string | null = this.route.snapshot.queryParamMap.get("year");
-      const monthString: string | null = this.route.snapshot.queryParamMap.get("month");
-      const dayString: string | null = this.route.snapshot.queryParamMap.get("day");
+    } else {
+      //Get date from param and check if it's valid
+      const yearString: string | null =
+        this.route.snapshot.queryParamMap.get('year');
+      const monthString: string | null =
+        this.route.snapshot.queryParamMap.get('month');
+      const dateString: string | null =
+        this.route.snapshot.queryParamMap.get('date');
 
-      if (yearString === null || monthString === null || dayString === null) {
-        void this.router.navigate(["/404"]);
+      if (yearString === null || monthString === null || dateString === null) {
+        void this.router.navigate(['/404']);
         return;
       }
 
-      const isValidDate: boolean = this.isValidDate(yearString, monthString, dayString);
+      const isValidDate: boolean = this.isValidDate(
+        yearString,
+        monthString,
+        dateString,
+      );
 
       if (isValidDate) {
-        this.currentSelectedDate = new Date(Number(yearString), Number(monthString) + 1, Number(dayString));
+        this.currentSelectedDate = new Date(
+          Number(yearString),
+          Number(monthString) - 1, // Month is 0 indexed!
+          Number(dateString),
+        );
       } else {
-        void this.router.navigate(["/404"]);
+        void this.router.navigate(['/404']);
         return;
       }
     }
 
     this.loadCurrentDateJournalData();
-
   }
 
   refreshSession(): void {
     this.authService.checkAuthStatus().subscribe({
-      next: value => console.log(value),
-      error: err => console.error(err)
-    })
+      next: (value) => console.log(value),
+      error: (err) => console.error(err),
+    });
   }
 
   openCalendar(): void {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {currentSelectedDate: this.currentSelectedDate};
+    dialogConfig.data = { currentSelectedDate: this.currentSelectedDate };
     dialogConfig.width = '400px';
+    dialogConfig.minHeight = '500px';
     dialogConfig.hasBackdrop = true;
 
     const dialogRef = this.dialog.open(CalendarPopupComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe((res: Date) => {
-      console.log("after close")
       if (res) {
-        console.log("after close success")
-        void this.router.navigate(["/journal"], {queryParams: {year: res.getFullYear(), month: res.getMonth() + 1, day: res.getDate()}});
-        this.currentSelectedDate = res;
-        this.loadCurrentDateJournalData();
+        this.changeCurrentSelectedDate(res);
       }
     });
   }
 
-  private isValidDate(yearString: string, monthString: string, dayString: string): boolean {
-    if (Number.isNaN(yearString) || Number.isNaN(monthString) || Number.isNaN(dayString)) {
+  changeDateByOneDay(direction: 'prev' | 'next'): void {
+    const date: Date = new Date(this.currentSelectedDate);
+    if (direction === 'prev') {
+      date.setDate(date.getDate() - 1);
+      this.changeCurrentSelectedDate(date);
+      // this.currentSelectedDate.update()
+    } else {
+      date.setDate(date.getDate() + 1);
+      this.changeCurrentSelectedDate(date);
+    }
+  }
+
+  saveJournal() {
+    const journalToSave: Journal = {
+      content: this.journalForm.value.content ?? '',
+      tags: this.journalForm.value.tags ?? [],
+      date: this.currentSelectedDate,
+    };
+    this.journalService.saveJournal(journalToSave).subscribe({
+      next: (_) =>
+        this.matSnackBar.open('journal.journalSaved', undefined, {
+          duration: 2000,
+        }),
+      error: (_) => this.matSnackBar.open('error.journal.journalSaveFailed'),
+    });
+  }
+
+  private isValidDate(
+    yearString: string,
+    monthString: string,
+    dayString: string,
+  ): boolean {
+    if (
+      Number.isNaN(yearString) ||
+      Number.isNaN(monthString) ||
+      Number.isNaN(dayString)
+    ) {
       return false;
     }
 
@@ -105,7 +169,7 @@ export class JournalPageComponent implements OnInit {
       return false;
     }
 
-    if (month < 0 || month > 11) {
+    if (month < 1 || month > 12) {
       return false;
     }
 
@@ -113,26 +177,44 @@ export class JournalPageComponent implements OnInit {
       return false;
     }
 
-    return true
-
+    return true;
   }
 
   private loadCurrentDateJournalData(): void {
-
-    this.journalService.getJournalOfDay(
-      this.currentSelectedDate.getFullYear(),
-      this.currentSelectedDate.getMonth(),
-      this.currentSelectedDate.getDate()
-    ).subscribe({
-      next: value => {
-        if (value) {
+    this.journalService.getJournalByDate(this.currentSelectedDate).subscribe({
+      next: (journal) => {
+        if (journal) {
           this.journalForm.setValue({
-            content: value.content,
-            labels: value.labels
+            content: journal.content,
+            tags: journal.tags,
           });
         }
-      }
+      },
+      error: (error: HttpErrorResponse) => {
+        const status: number = error.status;
+        const problem: ProblemDetails = error.error;
+        if (
+          status === 404 &&
+          problem.type === '/problems/journal/journal-not-found'
+        ) {
+          this.journalForm.setValue({
+            content: '',
+            tags: [],
+          });
+        }
+      },
     });
   }
 
+  private changeCurrentSelectedDate(res: Date) {
+    void this.router.navigate(['/journal'], {
+      queryParams: {
+        year: res.getFullYear(),
+        month: res.getMonth() + 1,
+        date: res.getDate(),
+      },
+    });
+    this.currentSelectedDate = res;
+    this.loadCurrentDateJournalData();
+  }
 }

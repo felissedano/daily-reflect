@@ -24,7 +24,7 @@ public class JournalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatus(404);
         pd.setTitle("Journal Not Found");
         pd.setDetail(detail);
-        pd.setType(URI.create("/problems/journal/profile-not-found"));
+        pd.setType(URI.create("/problems/journal/journal-not-found"));
         return new ResponseEntity<>(pd, HttpStatusCode.valueOf(404));
     }
 }
