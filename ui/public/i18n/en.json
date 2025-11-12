@@ -1,6 +1,6 @@
 {
-    "auth.login": "Log in",
-    "auth.register": "Register",
-    "auth.forgotPassword": "Forgot your password?",
-    "auth.newUser_q": "New user?"
+  "auth.login": "Log in",
+  "auth.register": "Register",
+  "auth.forgotPassword": "Forgot your password?",
+  "auth.newUser_q": "New user?"
 }

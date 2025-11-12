@@ -1,23 +1,46 @@
 <app-auth-layout title="Login">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput placeholder="Email" type="email" formControlName="email">
-            <mat-error *ngIf="loginForm.controls.email.errors">Email Required or Invalid Email</mat-error>
-        </mat-form-field>
-        <br>
-        <mat-form-field>
-            <mat-label>Password</mat-label>
-            <input matInput placeholder="passowrd" [type]="getInputType()" formControlName="password">
-            <button type="button" mat-icon-button matSuffix (click)="toggleHidePwd()">
-                <mat-icon>{{ getVisibilityIcon() }}</mat-icon>
-            </button>
-            <mat-error *ngIf="loginForm.controls.password.errors">Password required</mat-error>
-        </mat-form-field>
-        <mat-error *ngIf="loginErrorMessage !== null">{{loginErrorMessage}}</mat-error>
-        <br>
-        <button mat-flat-button>{{'auth.login' | translate}}</button>
-    </form>
-    <p>{{'auth.newUser_q' | translate}} <a routerLink="/auth/register">{{'auth.register' | translate }}</a></p>
-    <p><a routerLink="/auth/forgot-password">{{'auth.forgotPassword' | translate }}</a></p>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        placeholder="Email"
+        type="email"
+        formControlName="email"
+      />
+      <mat-error *ngIf="loginForm.controls.email.errors"
+        >Email Required or Invalid Email</mat-error
+      >
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        placeholder="passowrd"
+        [type]="getInputType()"
+        formControlName="password"
+      />
+      <button type="button" mat-icon-button matSuffix (click)="toggleHidePwd()">
+        <mat-icon>{{ getVisibilityIcon() }}</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.controls.password.errors"
+        >Password required</mat-error
+      >
+    </mat-form-field>
+    <mat-error *ngIf="loginErrorMessage !== null">{{
+      loginErrorMessage
+    }}</mat-error>
+    <br />
+    <button mat-flat-button>{{ 'auth.login' | translate }}</button>
+  </form>
+  <p>
+    {{ 'auth.newUser_q' | translate }}
+    <a routerLink="/auth/register">{{ 'auth.register' | translate }}</a>
+  </p>
+  <p>
+    <a routerLink="/auth/forgot-password">{{
+      'auth.forgotPassword' | translate
+    }}</a>
+  </p>
 </app-auth-layout>

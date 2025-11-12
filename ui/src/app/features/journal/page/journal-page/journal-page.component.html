@@ -1,32 +1,41 @@
 <app-main-layout />
 <div class="journal-container">
-
-    <div class="date-navigator">
-        <h1>{{'journal.pageTitle' | translate}}</h1>
-        <div class="date-nav-bar">
-            <button mat-icon-button (click)="this.changeDateByOneDay('prev')"><mat-icon>arrow_back</mat-icon></button>
-            <h3 class="date-display"> {{currentSelectedDate | date:'EE, MMM d, y'}}</h3>
-            <button mat-icon-button
-                (click)="this.changeDateByOneDay('next')"><mat-icon>arrow_forward</mat-icon></button>
-        </div>
-        <div>
-            <button mat-icon-button aria-label="Open calendar" (click)="openCalendar()">
-                <mat-icon>calendar_today</mat-icon>
-            </button>
-        </div>
+  <div class="date-navigator">
+    <h1>{{ 'journal.pageTitle' | translate }}</h1>
+    <div class="date-nav-bar">
+      <button mat-icon-button (click)="this.changeDateByOneDay('prev')">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3 class="date-display">
+        {{ currentSelectedDate | date: 'EE, MMM d, y' }}
+      </h3>
+      <button mat-icon-button (click)="this.changeDateByOneDay('next')">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
     </div>
-
-    <div class="journal-form-container">
-        <form [formGroup]="journalForm">
-            <mat-form-field class="journal-content-field">
-                <textarea matInput formControlName="content" name="content"></textarea>
-            </mat-form-field>
-            <br>
-            <button mat-flat-button><mat-icon>add</mat-icon> {{'journal.addLabel' | translate}}</button>
-        </form>
-        <br>
-        <button (click)="saveJournal()" mat-flat-button>Save</button>
-        <button (click)="refreshSession()" mat-flat-button>refresh</button>
+    <div>
+      <button
+        mat-icon-button
+        aria-label="Open calendar"
+        (click)="openCalendar()"
+      >
+        <mat-icon>calendar_today</mat-icon>
+      </button>
     </div>
+  </div>
 
+  <div class="journal-form-container">
+    <form [formGroup]="journalForm">
+      <mat-form-field class="journal-content-field">
+        <textarea matInput formControlName="content" name="content"></textarea>
+      </mat-form-field>
+      <br />
+      <button mat-flat-button>
+        <mat-icon>add</mat-icon> {{ 'journal.addLabel' | translate }}
+      </button>
+    </form>
+    <br />
+    <button (click)="saveJournal()" mat-flat-button>Save</button>
+    <button (click)="refreshSession()" mat-flat-button>refresh</button>
+  </div>
 </div>

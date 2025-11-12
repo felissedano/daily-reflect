@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  baseUrl: "NOTSET",
-  appName: "Daily Reflect"
+  baseUrl: 'NOTSET',
+  appName: 'Daily Reflect',
 };

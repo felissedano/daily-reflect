@@ -7,8 +7,6 @@ import { Component } from '@angular/core';
     <h1>404 Page Not Found</h1>
     <p>We could not find the specified page or resource</p>
   `,
-  styles: ``
+  styles: ``,
 })
-export class PageNotFoundComponent {
-
-}
+export class PageNotFoundComponent {}
