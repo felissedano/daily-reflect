@@ -183,25 +183,30 @@ export class JournalPageComponent implements OnInit {
   private loadCurrentDateJournalData(): void {
     this.journalService.getJournalByDate(this.currentSelectedDate).subscribe({
       next: (journal) => {
+        console.log('journal' + journal);
         if (journal) {
           this.journalForm.setValue({
             content: journal.content,
             tags: journal.tags,
           });
-        }
-      },
-      error: (error: HttpErrorResponse) => {
-        const status: number = error.status;
-        const problem: ProblemDetails = error.error;
-        if (
-          status === 404 &&
-          problem.type === '/problems/journal/journal-not-found'
-        ) {
+          // User does not have a journal created yet
+        } else {
           this.journalForm.setValue({
             content: '',
             tags: [],
           });
         }
+      },
+      error: (error: HttpErrorResponse) => {
+        const status: number = error.status;
+        console.log('error' + error);
+        this.matSnackBar.open(
+          'unknown error occured (status code ' + status + ')',
+        );
+        this.journalForm.setValue({
+          content: '',
+          tags: [],
+        });
       },
     });
   }

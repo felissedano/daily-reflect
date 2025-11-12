@@ -46,7 +46,7 @@ public class DefaultJournalService implements JournalService {
     }
 
     @Override
-    public JournalDto getJournalDto(LocalDate date, String userEmail) {
+    public Optional<JournalDto> getJournalDto(LocalDate date, String userEmail) {
         Profile profile = profileRepository
                 .findByUserEmail(userEmail)
                 .orElseThrow(
@@ -55,11 +55,7 @@ public class DefaultJournalService implements JournalService {
 
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
 
-        if (journalOpt.isEmpty())
-            throw new JournalNotFoundException("Journal associated with this user and date not found");
-        Journal journal = journalOpt.get();
-
-        return new JournalDto(journal.getContent(), journal.getTags(), journal.getDate());
+        return journalOpt.map(journal -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate()));
     }
 
     @Override

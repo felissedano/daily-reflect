@@ -21,7 +21,6 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -225,20 +224,16 @@ public class JournalIntegrationTest {
                 .when()
                 .get("api/journal/date/1970-12-31")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associated with the user not found."));
+                .statusCode(200)
+                .body(containsString("null"));
 
         given().sessionId(authResult.sessionId())
                 .header(new Header("Accept-Language", "fr"))
                 .when()
                 .get("api/journal/date/1970-12-31")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associé à cet utilisateur introuvable."));
+                .statusCode(200)
+                .body(containsString("null"));
     }
 
     @Test
@@ -296,10 +291,8 @@ public class JournalIntegrationTest {
                 .when()
                 .get("api/journal/date/2025-02-02")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associated with the user not found."));
+                .statusCode(200)
+                .body(containsString("null"));
 
         // Check that the journal also does not exist in the backend anymore
         Optional<Journal> journalDelOpt = journalRepository.findByDateAndProfile(LocalDate.of(2025, 2, 2), profile);

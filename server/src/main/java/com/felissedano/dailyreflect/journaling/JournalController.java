@@ -7,6 +7,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +50,12 @@ public class JournalController {
     // }
 
     @GetMapping("date/{date}")
-    public ResponseEntity<JournalDto> getJournalByDate(
+    public ResponseEntity<Optional<JournalDto>> getJournalByDate(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        JournalDto journalDto = journalService.getJournalDto(date, principal.getUsername());
-        return ResponseEntity.ok(journalDto);
+        Optional<JournalDto> journalDtoOpt = journalService.getJournalDto(date, principal.getUsername());
+        return ResponseEntity.ok(journalDtoOpt);
     }
 
 

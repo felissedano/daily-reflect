@@ -13,7 +13,7 @@ export class JournalService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getJournalByDate(date: Date): Observable<Journal> {
+  getJournalByDate(date: Date): Observable<Journal | null> {
     const dateString: string = stringfyDate(date);
     return this.httpClient.get<Journal>(
       this.API_URL + 'api/journal/date/' + dateString,
