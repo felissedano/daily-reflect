@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -58,7 +57,6 @@ public class JournalController {
         return ResponseEntity.ok(journalDtoOpt);
     }
 
-
     @DeleteMapping("date/{date}")
     public ResponseEntity<Void> deleteJournal(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
@@ -69,8 +67,9 @@ public class JournalController {
         return ResponseEntity.status(204).build();
     }
 
-    @GetMapping("year-month/{yearMonth}") 
-    public ResponseEntity<List<JournalDto>> getJournals(@PathVariable("yearMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
+    @GetMapping("year-month/{yearMonth}")
+    public ResponseEntity<List<JournalDto>> getJournals(
+            @PathVariable("yearMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -78,7 +77,6 @@ public class JournalController {
 
         return ResponseEntity.ok(journalDtos);
     }
-
 
     @PostMapping("edit")
     public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
@@ -95,7 +93,7 @@ public class JournalController {
         Profile profile =
                 profileRepository.findByUserEmail(principal.getUsername()).orElseThrow();
 
-        ArrayList<String> tagList = new ArrayList<>();
+        List<String> tagList = new ArrayList<>();
         tagList.addAll(Arrays.asList(new String[] {"feeling good", "cat", "!@#$"}));
         Journal journal = new Journal(LocalDate.of(2025, 1, 1), content, tagList, profile);
         // new ArrayList<>(), null);

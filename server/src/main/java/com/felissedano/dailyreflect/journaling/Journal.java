@@ -1,21 +1,10 @@
 package com.felissedano.dailyreflect.journaling;
 
 import com.felissedano.dailyreflect.profile.Profile;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,7 +27,7 @@ public class Journal {
     private String content;
 
     @Column(name = "tags", nullable = true)
-    private ArrayList<String> tags;
+    private List<String> tags;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -56,7 +45,7 @@ public class Journal {
 
     public Journal() {}
 
-    public Journal(LocalDate date, String content, ArrayList<String> tags, Profile profile) {
+    public Journal(LocalDate date, String content, List<String> tags, Profile profile) {
         this.date = date;
 
         this.content = content;
@@ -76,7 +65,7 @@ public class Journal {
         return content;
     }
 
-    public ArrayList<String> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
@@ -88,7 +77,7 @@ public class Journal {
         this.content = content;
     }
 
-    public void setTags(ArrayList<String> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

@@ -1,6 +1,5 @@
 package com.felissedano.dailyreflect.auth.web;
 
-import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.service.EmailVerificationService;
 import com.felissedano.dailyreflect.auth.service.PasswordService;
 import com.felissedano.dailyreflect.auth.service.UserService;
@@ -8,7 +7,6 @@ import com.felissedano.dailyreflect.auth.service.dto.LoginDto;
 import com.felissedano.dailyreflect.auth.service.dto.PasswordResetDTO;
 import com.felissedano.dailyreflect.auth.service.dto.UserDto;
 import com.felissedano.dailyreflect.common.GenericResponseDTO;
-import java.util.Optional;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;

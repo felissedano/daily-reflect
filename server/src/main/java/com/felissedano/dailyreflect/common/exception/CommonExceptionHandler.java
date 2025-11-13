@@ -2,7 +2,6 @@ package com.felissedano.dailyreflect.common.exception;
 
 import java.net.URI;
 import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -12,14 +11,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class CommonExceptionHandler{
+public class CommonExceptionHandler {
 
     private final MessageSource messageSource;
 
     public CommonExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
-
 
     @ExceptionHandler(exception = MailException.class)
     public ResponseEntity<ProblemDetail> handleMailException(MailException exception, Locale locale) {
@@ -29,6 +27,4 @@ public class CommonExceptionHandler{
         pd.setType(URI.create("/problems/server/server-error"));
         return new ResponseEntity<>(pd, HttpStatusCode.valueOf(500));
     }
-
-    
 }
