@@ -1,15 +1,15 @@
 .journal-container {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   align-items: center;
   margin: 0 auto;
   box-sizing: border-box;
   background-color: #333333;
   border-radius: 10px;
-  height: 80%;
+  height: 90%;
 }
 
-.date-navigator {
+.date-navigator-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,6 +55,11 @@
     min-height: 250px;
     resize: none;
   }
+}
+
+.journal-tag-field {
+  max-width: 1000px;
+  width: 100%;
 }
 
 @media (max-width: 600px) {

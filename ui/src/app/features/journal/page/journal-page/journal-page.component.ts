@@ -10,7 +10,7 @@ import {
 import { MainLayoutComponent } from '../../../../core/layout/main-layout/main-layout.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatIcon } from '@angular/material/icon';
@@ -23,8 +23,15 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Journal } from '../../journal.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetails } from '../../../../core/model/problem-details';
+import { checkIsValidDate } from '../../../../shared/util/dateUtil';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
+import {
+  MatChipEditedEvent,
+  MatChipInputEvent,
+  MatChipsModule,
+} from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-journal-page',
@@ -38,6 +45,8 @@ import { of } from 'rxjs';
     DatePipe,
     MatIconButton,
     ReactiveFormsModule,
+    MatFormFieldModule,
+    MatChipsModule,
   ],
   templateUrl: './journal-page.component.html',
   styleUrl: './journal-page.component.scss',
@@ -59,6 +68,8 @@ export class JournalPageComponent implements OnInit {
     tags: new FormControl<string[]>([]),
   });
 
+  readonly MAT_CHIP_SEPARATOR = [ENTER, COMMA] as const;
+
   ngOnInit(): void {
     // If no queryParam then display current local date
     if (this.route.snapshot.queryParamMap.keys.length === 0) {
@@ -77,7 +88,7 @@ export class JournalPageComponent implements OnInit {
         return;
       }
 
-      const isValidDate: boolean = this.isValidDate(
+      const isValidDate: boolean = checkIsValidDate(
         yearString,
         monthString,
         dateString,
@@ -133,6 +144,19 @@ export class JournalPageComponent implements OnInit {
     }
   }
 
+  editTag(index: number, event: MatChipEditedEvent) {
+    this.journalForm.value.tags![index] = event.value;
+  }
+
+  removeTag(index: number) {
+    this.journalForm.value.tags?.splice(index, 1);
+  }
+
+  addTag(event: MatChipInputEvent) {
+    this.journalForm.value.tags?.push(event.value);
+    event.chipInput!.clear();
+  }
+
   saveJournal() {
     const journalToSave: Journal = {
       content: this.journalForm.value.content ?? '',
@@ -144,46 +168,16 @@ export class JournalPageComponent implements OnInit {
         this.matSnackBar.open('journal.journalSaved', undefined, {
           duration: 2000,
         }),
-      error: (_) => this.matSnackBar.open('error.journal.journalSaveFailed'),
+      error: (_) =>
+        this.matSnackBar.open('error.journal.journalSaveFailed', undefined, {
+          duration: 2000,
+        }),
     });
-  }
-
-  private isValidDate(
-    yearString: string,
-    monthString: string,
-    dayString: string,
-  ): boolean {
-    if (
-      Number.isNaN(yearString) ||
-      Number.isNaN(monthString) ||
-      Number.isNaN(dayString)
-    ) {
-      return false;
-    }
-
-    const year = Number(yearString);
-    const month = Number(monthString);
-    const day = Number(dayString);
-
-    if (year < 1900 || year > 9999) {
-      return false;
-    }
-
-    if (month < 1 || month > 12) {
-      return false;
-    }
-
-    if (day < 1 || day > 31) {
-      return false;
-    }
-
-    return true;
   }
 
   private loadCurrentDateJournalData(): void {
     this.journalService.getJournalByDate(this.currentSelectedDate).subscribe({
       next: (journal) => {
-        console.log('journal' + journal);
         if (journal) {
           this.journalForm.setValue({
             content: journal.content,
@@ -200,13 +194,23 @@ export class JournalPageComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         const status: number = error.status;
         console.log('error' + error);
-        this.matSnackBar.open(
-          'unknown error occured (status code ' + status + ')',
-        );
-        this.journalForm.setValue({
-          content: '',
-          tags: [],
-        });
+        // Getting unautorized code, means session expired
+        if (status === 401) {
+          this.router.navigate(['auth/login']);
+          this.matSnackBar.open('Session expried', undefined, {
+            duration: 2000,
+          });
+        } else {
+          this.matSnackBar.open(
+            'unknown error occured (status code ' + status + ')',
+            undefined,
+            { duration: 2000 },
+          );
+          this.journalForm.setValue({
+            content: '',
+            tags: [],
+          });
+        }
       },
     });
   }

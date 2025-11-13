@@ -1,6 +1,6 @@
 <app-main-layout />
 <div class="journal-container">
-  <div class="date-navigator">
+  <div class="date-navigator-container">
     <h1>{{ 'journal.pageTitle' | translate }}</h1>
     <div class="date-nav-bar">
       <button mat-icon-button (click)="this.changeDateByOneDay('prev')">
@@ -25,17 +25,50 @@
   </div>
 
   <div class="journal-form-container">
-    <form [formGroup]="journalForm">
-      <mat-form-field class="journal-content-field">
-        <textarea matInput formControlName="content" name="content"></textarea>
-      </mat-form-field>
-      <br />
-      <button mat-flat-button>
-        <mat-icon>add</mat-icon> {{ 'journal.addLabel' | translate }}
-      </button>
+    <form [formGroup]="journalForm" (ngSubmit)="saveJournal()">
+      <div>
+        <mat-form-field class="journal-content-field">
+          <textarea
+            matInput
+            formControlName="content"
+            name="content"
+          ></textarea>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="journal-tag-field">
+          <mat-label>
+            {{ 'journal.mangage_tags.label' | translate }}
+          </mat-label>
+          <mat-chip-grid #chipGrid aria-label="Enter a tag">
+            @for (tag of journalForm.value.tags; track $index) {
+              <mat-chip-row
+                (removed)="removeTag($index)"
+                [editable]="true"
+                (edited)="editTag($index, $event)"
+                [aria-description]="'press enter to edit ' + tag"
+              >
+                <button matChipEdit [attr.aria-label]="'edit ' + tag">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                {{ tag }}
+                <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            }
+            <input
+              placeholder="new tags..."
+              [matChipInputFor]="chipGrid"
+              [matChipInputSeparatorKeyCodes]="MAT_CHIP_SEPARATOR"
+              (matChipInputTokenEnd)="addTag($event)"
+            />
+          </mat-chip-grid>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-flat-button>Save</button>
+      </div>
     </form>
-    <br />
-    <button (click)="saveJournal()" mat-flat-button>Save</button>
-    <button (click)="refreshSession()" mat-flat-button>refresh</button>
   </div>
 </div>
