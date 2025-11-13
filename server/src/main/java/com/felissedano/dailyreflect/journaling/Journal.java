@@ -27,6 +27,7 @@ public class Journal {
     private String content;
 
     @Column(name = "tags", nullable = true)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 
     @CreatedDate

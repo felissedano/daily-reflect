@@ -181,7 +181,9 @@ public class JournalIntegrationTest {
 
         Journal journal2 = journalRepository.findById(journal.getId()).get();
         assertThat(journal2.getContent()).isEqualTo("New Content");
-        assertThat(journal2.getTags()).isEqualTo(Arrays.asList("new tag", "tag3"));
+        // NOTE: Due to weird implementation of hibernate `equals()` in PersistentBag class, it is not symmetric
+        // So must compare a List against PersistentBag instead of reverse.
+        assertThat(Arrays.asList("new tag", "tag3")).isEqualTo(journal2.getTags());
     }
 
     @Test
