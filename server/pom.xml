@@ -112,7 +112,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -153,6 +152,26 @@
                             <formatJavadoc>false</formatJavadoc>
                         </palantirJavaFormat>
                     </java>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>11.17.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-database-postgresql</artifactId>
+                        <version>10.20.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <url>${env.DATABASE_URL}</url>
+                    <user>${env.POSTGRES_USER}</user>
+                    <password>${env.POSTGRES_PASSWORD}</password>
+                    <locations>classpath:db/migration</locations>
+                    <validateMigrationNaming>true</validateMigrationNaming>
+                    <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>
         </plugins>
