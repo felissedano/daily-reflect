@@ -26,7 +26,6 @@ public class Journal {
     @Column(name = "content", nullable = true)
     private String content;
 
-    @Column(name = "tags", nullable = true)
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 
@@ -38,9 +37,9 @@ public class Journal {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinTable(
-            name = "profile_journals",
-            joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "journal_id", referencedColumnName = "id"),
+            name = "journals_profile",
+            joinColumns = @JoinColumn(name = "journal_id", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id", nullable = false),
             indexes = @Index(columnList = "profile_id"))
     private Profile profile;
 
