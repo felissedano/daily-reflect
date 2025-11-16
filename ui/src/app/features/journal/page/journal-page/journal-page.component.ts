@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MainLayoutComponent } from '../../../../core/layout/main-layout/main-layout.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -20,12 +12,10 @@ import { CalendarPopupComponent } from '../../calendar-popup/calendar-popup.comp
 import { ActivatedRoute, Router } from '@angular/router';
 import { JournalService } from '../../journal.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Journal } from '../../journal.model';
+import { Journal, JournalDto } from '../../journal.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ProblemDetails } from '../../../../core/model/problem-details';
-import { checkIsValidDate } from '../../../../shared/util/dateUtil';
+import { checkIsValidDate, stringfyDate } from '../../../../shared/util/dateUtil';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
 import {
   MatChipEditedEvent,
   MatChipInputEvent,
@@ -109,13 +99,6 @@ export class JournalPageComponent implements OnInit {
     this.loadCurrentDateJournalData();
   }
 
-  refreshSession(): void {
-    this.authService.checkAuthStatus().subscribe({
-      next: (value) => console.log(value),
-      error: (err) => console.error(err),
-    });
-  }
-
   openCalendar(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = { currentSelectedDate: this.currentSelectedDate };
@@ -158,10 +141,10 @@ export class JournalPageComponent implements OnInit {
   }
 
   saveJournal() {
-    const journalToSave: Journal = {
+    const journalToSave: JournalDto = {
       content: this.journalForm.value.content ?? '',
       tags: this.journalForm.value.tags ?? [],
-      date: this.currentSelectedDate,
+      date: stringfyDate(this.currentSelectedDate),
     };
     this.journalService.saveJournal(journalToSave).subscribe({
       next: (_) =>
@@ -194,15 +177,15 @@ export class JournalPageComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         const status: number = error.status;
         console.log('error' + error);
-        // Getting unautorized code, means session expired
+        // Getting unauthorized code, means session expired
         if (status === 401) {
-          this.router.navigate(['auth/login']);
+          void this.router.navigate(['auth/login']);
           this.matSnackBar.open('Session expried', undefined, {
             duration: 2000,
           });
         } else {
           this.matSnackBar.open(
-            'unknown error occured (status code ' + status + ')',
+            'unknown error occurred (status code ' + status + ')',
             undefined,
             { duration: 2000 },
           );

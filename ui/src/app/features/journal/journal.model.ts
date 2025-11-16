@@ -3,3 +3,9 @@ export interface Journal {
   content: string;
   tags: string[];
 }
+
+export interface JournalDto {
+  date: string;
+  content: string;
+  tags: string[];
+}
