@@ -1,5 +1,5 @@
 export interface GenericResponse {
-  status: Number;
+  status: number;
   isSuccess: boolean;
   message: string;
 }

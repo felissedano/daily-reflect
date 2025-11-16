@@ -1,6 +1,6 @@
 export interface ProblemDetails {
   instance: string;
-  status: Number;
+  status: number;
   type: string;
   title: string;
   detail: string;

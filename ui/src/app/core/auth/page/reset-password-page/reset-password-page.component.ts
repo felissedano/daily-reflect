@@ -7,7 +7,6 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
 import {
   passwordValidatorArray,
@@ -74,7 +73,7 @@ export class ResetPasswordPageComponent implements OnInit {
         token: this.verificationCode,
       })
       .subscribe({
-        next: (value) => (this.confirmState = 'success'),
+        next: (_) => (this.confirmState = 'success'),
         error: (err) => {
           const pd = err.error as ProblemDetails;
           this.errorMessage = pd.detail;

@@ -2,11 +2,10 @@ import { Component } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuthLayoutComponent } from '../../../layout/auth-layout/auth-layout.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatInput, MatSuffix } from '@angular/material/input';
 import {
   FormControl,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -65,7 +64,7 @@ export class LoginPageComponent {
         this.loginForm.value.password as string,
       )
       .subscribe({
-        next: (response) => {
+        next: (_response) => {
           console.log('Success');
           void this.router.navigate(['/journal']);
         },

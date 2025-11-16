@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MainLayoutComponent } from '../../../../core/layout/main-layout/main-layout.component';
-import { AuthService } from '../../../../core/auth/auth.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -12,9 +11,12 @@ import { CalendarPopupComponent } from '../../calendar-popup/calendar-popup.comp
 import { ActivatedRoute, Router } from '@angular/router';
 import { JournalService } from '../../journal.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Journal, JournalDto } from '../../journal.model';
+import { JournalDto } from '../../journal.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { checkIsValidDate, stringfyDate } from '../../../../shared/util/dateUtil';
+import {
+  checkIsValidDate,
+  stringfyDate,
+} from '../../../../shared/util/dateUtil';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   MatChipEditedEvent,
@@ -43,7 +45,6 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 })
 export class JournalPageComponent implements OnInit {
   constructor(
-    private authService: AuthService,
     private journalService: JournalService,
     private route: ActivatedRoute,
     private router: Router,

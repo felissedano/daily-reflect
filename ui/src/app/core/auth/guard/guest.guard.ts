@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { map } from 'rxjs';
 
-export const guestGuard: CanActivateFn = (route, state) => {
+export const guestGuard: CanActivateFn = (_route, _state) => {
   const router: Router = inject(Router);
   const authService: AuthService = inject(AuthService);
 

@@ -6,7 +6,6 @@ import { AuthService } from '../../auth.service';
 import { MatError } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgIf } from '@angular/common';
-import { HttpResponse } from '@angular/common/http';
 import { GenericResponse } from '../../../model/generic-response';
 
 @Component({

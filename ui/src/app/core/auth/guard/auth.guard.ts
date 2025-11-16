@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { map } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = (_route, _state) => {
   const router: Router = inject(Router);
   const authService: AuthService = inject(AuthService);
   const snackbar: MatSnackBar = inject(MatSnackBar);

@@ -37,7 +37,7 @@ export class ConfirmEmailPageComponent implements OnInit {
     this.authService
       .confirmEmail(this.userEmail, this.verificationCode)
       .subscribe({
-        next: (value) => (this.confirmState = 'success'),
+        next: (_value) => (this.confirmState = 'success'),
         error: (err) => {
           const pd = err.error as ProblemDetails;
           this.confirmState = 'failed';

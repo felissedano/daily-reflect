@@ -47,7 +47,7 @@ export class ForgotPasswordPageComponent {
     this.authService
       .sendPasswordResetLink(this.forgotPasswordForm.value.email as string)
       .subscribe({
-        next: (value) => (this.actionState = 'sent'),
+        next: (_value) => (this.actionState = 'sent'),
         error: (err) => {
           console.error(err);
           this.errorMsg = err.error.detail;
