@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatButton } from '@angular/material/button';
 
@@ -12,18 +12,31 @@ import { MatButton } from '@angular/material/button';
   `,
   styles: ``,
 })
-export class LanguageSwitcherComponent {
-  currentLang = 'en';
+export class LanguageSwitcherComponent implements OnInit {
+  currentLang: string = localStorage.getItem('locale') ?? 'en';
 
   constructor(private translateService: TranslateService) {}
 
+  ngOnInit(): void {
+    this.translateService.use(this.currentLang);
+    this.translateService.setDefaultLang('en');
+  }
+
   switchLanguage() {
     if (this.currentLang === 'en') {
-      this.translateService.use('fr');
-      this.currentLang = 'fr';
+      this.translateService.use('fr').subscribe({
+        next: (_) => {
+          localStorage.setItem('locale', 'fr');
+          this.currentLang = 'fr';
+        },
+      });
     } else {
-      this.translateService.use('en');
-      this.currentLang = 'en';
+      this.translateService.use('en').subscribe({
+        next: (_) => {
+          localStorage.setItem('locale', 'fr');
+          this.currentLang = 'en';
+        },
+      });
     }
   }
 }
