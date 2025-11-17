@@ -3,7 +3,7 @@ package com.felissedano.dailyreflect.journaling;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.domain.model.User;
@@ -19,10 +19,8 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,12 +110,6 @@ public class JournalIntegrationTest {
         return new AuthResult(xsrfToken, sessionId);
     }
 
-    private Date getDateFromString(String dateString, boolean inputHasNoTime) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        String timePortion = inputHasNoTime ? "T00:00:00.000+00:00" : "";
-        return sdf.parse(dateString + timePortion);
-    }
-
     @Test
     public void tmp_testCanSaveMockJournal() {
         AuthResult authResult = loginUserForTest();
@@ -152,7 +144,6 @@ public class JournalIntegrationTest {
                 .statusCode(201);
 
         Profile profile = profileRepository.findByUserEmail(user.getEmail()).get();
-        Date date = getDateFromString("2025-01-01", true);
 
         Journal journal = journalRepository
                 .findByDateAndProfile(LocalDate.of(2025, 1, 1), profile)

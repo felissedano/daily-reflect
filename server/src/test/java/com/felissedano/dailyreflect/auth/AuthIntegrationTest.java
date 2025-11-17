@@ -210,7 +210,6 @@ public class AuthIntegrationTest {
     public void whenUserRegisterVerifyAndLogin_shouldSucceed() {
         String xsrfToken = getXsrfToken();
 
-        UserDto user = new UserDto("alice@example.com", "alice", "password");
         given().contentType(ContentType.JSON)
                 .header(new Header("X-XSRF-TOKEN", xsrfToken))
                 .cookie("XSRF-TOKEN", xsrfToken)

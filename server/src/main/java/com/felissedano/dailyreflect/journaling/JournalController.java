@@ -1,11 +1,8 @@
 package com.felissedano.dailyreflect.journaling;
 
-import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -40,13 +37,6 @@ public class JournalController {
         this.profileRepository = profileRepository;
         this.journalService = journalService;
     }
-
-    // @GetMapping("id/{id}")
-    // public ResponseEntity<Journal> getJournal(@PathVariable("id") long id) {
-    //     Optional<Journal> journal = journalRepository.findById(id);
-    //     return journal.map(ResponseEntity::ok)
-    //             .orElseGet(() -> ResponseEntity.notFound().build());
-    // }
 
     @GetMapping("date/{date}")
     public ResponseEntity<Optional<JournalDto>> getJournalByDate(
@@ -84,20 +74,5 @@ public class JournalController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         journalService.createOrUpdateJournal(journalDto, principal.getUsername());
         return ResponseEntity.status(201).build();
-    }
-
-    @GetMapping("mock/{content}")
-    public ResponseEntity<Journal> addMockJournal(@PathVariable String content) {
-        UserDetails principal = (UserDetails)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Profile profile =
-                profileRepository.findByUserEmail(principal.getUsername()).orElseThrow();
-
-        List<String> tagList = new ArrayList<>();
-        tagList.addAll(Arrays.asList(new String[] {"feeling good", "cat", "!@#$"}));
-        Journal journal = new Journal(LocalDate.of(2025, 1, 1), content, tagList, profile);
-        // new ArrayList<>(), null);
-        Journal savedJournal = journalRepository.save(journal);
-        return ResponseEntity.ok(savedJournal);
     }
 }

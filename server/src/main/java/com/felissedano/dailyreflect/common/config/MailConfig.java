@@ -8,6 +8,7 @@ import java.io.InputStream;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,17 +25,17 @@ public class MailConfig {
     private static class MockMailSender implements JavaMailSender {
 
         @Override
-        public MimeMessage createMimeMessage() {
+        public @NonNull MimeMessage createMimeMessage() {
             return new MimeMessage((Session) null);
         }
 
         @Override
-        public MimeMessage createMimeMessage(InputStream contentStream) throws MailException {
+        public @NonNull MimeMessage createMimeMessage(@NonNull InputStream contentStream) throws MailException {
             return new MimeMessage((Session) null);
         }
 
         @Override
-        public void send(MimeMessage... mimeMessages) throws MailException {
+        public void send(@NonNull MimeMessage... mimeMessages) throws MailException {
             for (MimeMessage mimeMessage : mimeMessages) {
                 try {
                     System.out.println("\nMimeMessage email -> \nSubject: " + mimeMessage.getSubject() + "\nContent : "
@@ -48,7 +49,7 @@ public class MailConfig {
         }
 
         @Override
-        public void send(SimpleMailMessage... simpleMessages) throws MailException {
+        public void send(@NonNull SimpleMailMessage... simpleMessages) throws MailException {
             for (SimpleMailMessage simpleMessage : simpleMessages) {
                 System.out.println("\nSimpleMailMessage email -> \nSubject:" + simpleMessage.getSubject()
                         + "\nContent: " + simpleMessage.getText() + "\n");
