@@ -10,18 +10,21 @@
   </div>
 
   <div class="calendar-grid">
-    <div class="day-header" *ngFor="let day of weekDayNames">{{ day }}</div>
+    @for (day of weekDayNames; track day) {
+      <div class="day-header">{{ day }}</div>
+    }
 
-    <div
-      class="day-cell"
-      *ngFor="let day of calendarDays"
-      [class.has-journal]="hasJournal(day.date)"
-      [class.selected-day]="isSelectedDay(day.date)"
-      [class.current-month]="day.isCurrentMonth"
-      (click)="selectDay(day.date)"
-    >
-      {{ day.date | date: 'd' }}
-    </div>
+    @for (day of calendarDays; track day) {
+      <div
+        class="day-cell"
+        [class.has-journal]="hasJournal(day.date)"
+        [class.selected-day]="isSelectedDay(day.date)"
+        [class.current-month]="day.isCurrentMonth"
+        (click)="selectDay(day.date)"
+        >
+        {{ day.date | date: 'd' }}
+      </div>
+    }
   </div>
 </mat-dialog-content>
 

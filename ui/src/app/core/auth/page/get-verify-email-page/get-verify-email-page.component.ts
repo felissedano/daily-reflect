@@ -5,12 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { MatError } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NgIf } from '@angular/common';
+
 import { GenericResponse } from '../../../model/generic-response';
 
 @Component({
   selector: 'app-verify-email-page',
-  imports: [AuthLayoutComponent, MatButton, MatError, NgIf],
+  imports: [AuthLayoutComponent, MatButton, MatError],
   templateUrl: './get-verify-email-page.component.html',
   styleUrl: './get-verify-email-page.component.scss',
 })

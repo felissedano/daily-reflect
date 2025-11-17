@@ -15,7 +15,7 @@ import {
 import { AuthLayoutComponent } from '../../../layout/auth-layout/auth-layout.component';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { NgIf } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 
 @Component({
@@ -28,10 +28,9 @@ import { MatButton } from '@angular/material/button';
     MatError,
     MatInput,
     MatLabel,
-    NgIf,
     MatButton,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './reset-password-page.component.html',
   styleUrl: './reset-password-page.component.scss',
 })

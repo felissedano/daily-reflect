@@ -12,7 +12,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf } from '@angular/common';
+
 import { AuthService } from '../../auth.service';
 import { ProblemDetails } from '../../../model/problem-details';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -32,9 +32,8 @@ import { TranslateModule } from '@ngx-translate/core';
     MatIconButton,
     MatSuffix,
     RouterLink,
-    NgIf,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
 })

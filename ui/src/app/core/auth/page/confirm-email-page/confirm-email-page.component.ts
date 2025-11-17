@@ -3,12 +3,12 @@ import { AuthLayoutComponent } from '../../../layout/auth-layout/auth-layout.com
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
-import { NgIf } from '@angular/common';
+
 import { ProblemDetails } from '../../../model/problem-details';
 
 @Component({
   selector: 'app-confirm-email-page',
-  imports: [AuthLayoutComponent, MatButton, NgIf],
+  imports: [AuthLayoutComponent, MatButton],
   templateUrl: './confirm-email-page.component.html',
   styleUrl: './confirm-email-page.component.scss',
 })

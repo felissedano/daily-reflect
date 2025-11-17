@@ -6,7 +6,7 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { DatePipe, NgForOf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Journal } from '../journal.model';
 import { JournalService } from '../journal.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -29,9 +29,8 @@ interface CalendarDay {
     MatButton,
     MatIconButton,
     MatIcon,
-    NgForOf,
-    TranslatePipe,
-  ],
+    TranslatePipe
+],
   templateUrl: './calendar-popup.component.html',
   styleUrl: './calendar-popup.component.scss',
 })

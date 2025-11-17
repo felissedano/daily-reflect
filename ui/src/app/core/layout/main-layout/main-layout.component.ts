@@ -4,7 +4,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LanguageSwitcherComponent } from '../../lang/language-switcher/language-switcher.component';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -17,10 +17,9 @@ import { environment } from '../../../../environments/environment';
     MatButtonModule,
     MatIconModule,
     RouterLink,
-    CommonModule,
     LanguageSwitcherComponent,
-    MatToolbar,
-  ],
+    MatToolbar
+],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
 })

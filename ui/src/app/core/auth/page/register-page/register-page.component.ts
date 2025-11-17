@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthLayoutComponent } from '../../../layout/auth-layout/auth-layout.component';
 import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
-import { NgIf } from '@angular/common';
+
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import {
@@ -27,9 +27,8 @@ import {
     AuthLayoutComponent,
     MatButton,
     MatInput,
-    NgIf,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
 })

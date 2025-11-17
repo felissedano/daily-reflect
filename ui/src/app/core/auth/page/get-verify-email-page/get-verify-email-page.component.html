@@ -5,7 +5,9 @@
       {{ userEmail }}. Please click on the link in the email confirm your email
       address. If you did not receive it, please check your spam box.
     </h3>
-    <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+    @if (errorMessage) {
+      <mat-error>{{ errorMessage }}</mat-error>
+    }
     <button type="button" (click)="resendEmail()" mat-flat-button>
       Resend verification email
     </button>

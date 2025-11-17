@@ -8,9 +8,9 @@
         type="email"
         formControlName="email"
       />
-      <mat-error *ngIf="loginForm.controls.email.errors"
-        >Email Required or Invalid Email</mat-error
-      >
+      @if (loginForm.controls.email.errors) {
+        <mat-error>Email Required or Invalid Email</mat-error>
+      }
     </mat-form-field>
     <br />
     <mat-form-field>
@@ -24,13 +24,11 @@
       <button type="button" mat-icon-button matSuffix (click)="toggleHidePwd()">
         <mat-icon>{{ getVisibilityIcon() }}</mat-icon>
       </button>
-      <mat-error *ngIf="loginForm.controls.password.errors"
-        >Password required</mat-error
-      >
+      @if (loginForm.controls.password.errors) {
+        <mat-error>Password required</mat-error>
+      }
     </mat-form-field>
-    <mat-error *ngIf="loginErrorMessage !== null">{{
-      loginErrorMessage
-    }}</mat-error>
+    <mat-error>{{ loginErrorMessage }}</mat-error>
     <br />
     <button mat-flat-button>{{ 'auth.login' | translate }}</button>
   </form>
