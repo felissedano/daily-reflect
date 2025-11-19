@@ -3,12 +3,13 @@ import { AuthService } from '../../auth/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LanguageSwitcherComponent } from '../../lang/language-switcher/language-switcher.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,10 +17,10 @@ import { environment } from '../../../../environments/environment';
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
-    RouterLink,
     LanguageSwitcherComponent,
-    MatToolbar
-],
+    MatToolbar,
+    TranslateModule,
+  ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
 })

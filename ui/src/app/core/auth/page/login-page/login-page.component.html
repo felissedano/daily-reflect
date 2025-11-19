@@ -1,23 +1,23 @@
-<app-auth-layout title="Login">
+<app-auth-layout [title]="'auth.login.title' | translate">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'auth.email.label' | translate }}</mat-label>
       <input
         matInput
-        placeholder="Email"
+        [placeholder]="'auth.email.label' | translate"
         type="email"
         formControlName="email"
       />
       @if (loginForm.controls.email.errors) {
-        <mat-error>Email Required or Invalid Email</mat-error>
+        <mat-error>{{ 'auth.invalid-email.error' | translate }}</mat-error>
       }
     </mat-form-field>
     <br />
     <mat-form-field>
-      <mat-label>Password</mat-label>
+      <mat-label>{{ 'auth.password.label' | translate }}</mat-label>
       <input
         matInput
-        placeholder="passowrd"
+        [placeholder]="'auth.password.label' | translate"
         [type]="getInputType()"
         formControlName="password"
       />
@@ -25,20 +25,20 @@
         <mat-icon>{{ getVisibilityIcon() }}</mat-icon>
       </button>
       @if (loginForm.controls.password.errors) {
-        <mat-error>Password required</mat-error>
+        <mat-error>{{ 'auth.password.field-error' }}</mat-error>
       }
     </mat-form-field>
     <mat-error>{{ loginErrorMessage }}</mat-error>
     <br />
-    <button mat-flat-button>{{ 'auth.login' | translate }}</button>
+    <button mat-flat-button>{{ 'auth.login.button' | translate }}</button>
   </form>
   <p>
-    {{ 'auth.newUser_q' | translate }}
-    <a routerLink="/auth/register">{{ 'auth.register' | translate }}</a>
+    {{ 'auth.new-user-register.link' | translate }}
+    <a routerLink="/auth/register">{{ 'auth.register.button' | translate }}</a>
   </p>
   <p>
     <a routerLink="/auth/forgot-password">{{
-      'auth.forgotPassword' | translate
+      'auth.forgot-password_q.link' | translate
     }}</a>
   </p>
 </app-auth-layout>

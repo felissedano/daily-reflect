@@ -1,79 +1,88 @@
-<app-auth-layout title="Register">
+<app-auth-layout [title]="'auth.register.title' | translate">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
-      <mat-label>Username</mat-label>
+      <mat-label>{{ 'auth.username.label' | translate }}</mat-label>
       <input matInput type="text" formControlName="username" name="username" />
       @if (registerForm.controls.username.hasError('required')) {
-        <mat-error
-          >This field is required</mat-error
-          >
-        }
-        @if (registerForm.controls.username.hasError('minlength')) {
-          <mat-error
-            >Username needs to be a least 4 characters long</mat-error
-            >
-          }
-        </mat-form-field>
-        <br />
-        <mat-form-field>
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" name="email" />
-          @if (registerForm.controls.email.hasError('required')) {
-            <mat-error
-              >This field is required</mat-error
-              >
-            }
-            @if (registerForm.controls.email.hasError('email')) {
-              <mat-error
-                >Invalid email format</mat-error
-                >
-              }
-            </mat-form-field>
-            <br />
-            <mat-form-field>
-              <mat-label>Password</mat-label>
-              <input
-                matInput
-                type="password"
-                formControlName="password"
-                name="password"
-                />
-              @if (registerForm.controls.password.hasError('required')) {
-                <mat-error
-                  >This field is required</mat-error
-                  >
-                }
-                @if (registerForm.controls.password.hasError('pattern')) {
-                  <mat-error
-                    >Must contain at least 8 character, one capital letter, one lowercase
-                    letter and one number</mat-error
-                    >
-                  }
-                </mat-form-field>
-                <br />
-                <mat-form-field>
-                  <mat-label>Confirm Password</mat-label>
-                  <input
-                    matInput
-                    type="password"
-                    formControlName="confirmPassword"
-                    name="confirmPassword"
-                    />
-                  @if (registerForm.controls.confirmPassword.hasError('required')) {
-                    <mat-error
-                      >This field is required</mat-error
-                      >
-                    }
-                    @if (registerForm.controls.confirmPassword.hasError('samePassword')) {
-                      <mat-error
-                        >The two passwords do not match</mat-error
-                        >
-                      }
-                    </mat-form-field>
-                    <br />
+        <mat-error>{{
+          'form.this-field-is-required.error' | translate
+        }}</mat-error>
+      }
+      @if (registerForm.controls.username.hasError('minlength')) {
+        <mat-error>{{
+          'auth.username-need-four-char-long.error' | translate
+        }}</mat-error>
+      }
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>{{ 'auth.email.label' | translate }}</mat-label>
+      <input matInput type="email" formControlName="email" name="email" />
+      @if (registerForm.controls.email.hasError('required')) {
+        <mat-error>{{
+          'form.this-field-is-required.error' | translate
+        }}</mat-error>
+      }
+      @if (registerForm.controls.email.hasError('email')) {
+        <mat-error>{{
+          'auth.invalid-email-format.error' | translate
+        }}</mat-error>
+      }
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>{{ 'auth.password.label' | translate }}</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="password"
+        name="password"
+      />
+      @if (registerForm.controls.password.hasError('required')) {
+        <mat-error>{{
+          'form.this-field-is-required.error' | translate
+        }}</mat-error>
+      }
+      @if (registerForm.controls.password.hasError('pattern')) {
+        <mat-error>{{
+          'auth.password-eight-char-one-cap-one-letter-one-lowercase-one-number.error'
+            | translate
+        }}</mat-error>
+      }
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>{{ 'auth.confirm-password.label' | translate }}</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="confirmPassword"
+        name="confirmPassword"
+      />
+      @if (registerForm.controls.confirmPassword.hasError('required')) {
+        <mat-error>{{
+          'form.this-field-is-required.error' | translate
+        }}</mat-error>
+      }
+      @if (registerForm.controls.confirmPassword.hasError('samePassword')) {
+        <mat-error>{{
+          'auth.passwords-not-match.error' | translate
+        }}</mat-error>
+      }
+    </mat-form-field>
+    <br />
 
-                    <button mat-flat-button type="submit">Register</button>
-                  </form>
-                  <p>Already have an account? <a routerLink="/auth/login">Login</a></p>
-                  <p><a routerLink="/auth/forgot-password">Forgot your password?</a></p>
-                </app-auth-layout>
+    <button mat-flat-button type="submit">
+      {{ 'auth.register.button' | translate }}
+    </button>
+  </form>
+  <p>
+    {{ 'auth.already-have-account_q.link' | translate }}
+    <a routerLink="/auth/login">{{ 'auth.login.button' | translate }}</a>
+  </p>
+  <p>
+    <a routerLink="/auth/forgot-password">{{
+      'auth.forgot-password_q.link' | translate
+    }}</a>
+  </p>
+</app-auth-layout>

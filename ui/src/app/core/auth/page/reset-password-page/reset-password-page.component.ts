@@ -17,6 +17,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
 import { MatButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-reset-password-page',
@@ -29,8 +30,9 @@ import { MatButton } from '@angular/material/button';
     MatInput,
     MatLabel,
     MatButton,
-    RouterLink
-],
+    RouterLink,
+    TranslateModule,
+  ],
   templateUrl: './reset-password-page.component.html',
   styleUrl: './reset-password-page.component.scss',
 })

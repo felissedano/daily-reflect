@@ -29,8 +29,8 @@ interface CalendarDay {
     MatButton,
     MatIconButton,
     MatIcon,
-    TranslatePipe
-],
+    TranslatePipe,
+  ],
   templateUrl: './calendar-popup.component.html',
   styleUrl: './calendar-popup.component.scss',
 })

@@ -23,14 +23,16 @@ export class LanguageSwitcherComponent implements OnInit {
   }
 
   switchLanguage() {
-    if (this.currentLang === 'en') { // Switch to french
+    if (this.currentLang === 'en') {
+      // Switch to french
       this.translateService.use('fr').subscribe({
         next: (_) => {
           localStorage.setItem('locale', 'fr');
           this.currentLang = 'fr';
         },
       });
-    } else { // Switch to english
+    } else {
+      // Switch to english
       this.translateService.use('en').subscribe({
         next: (_) => {
           localStorage.setItem('locale', 'en');

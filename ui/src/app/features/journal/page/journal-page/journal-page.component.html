@@ -1,7 +1,7 @@
 <app-main-layout />
 <div class="journal-container">
   <div class="date-navigator-container">
-    <h1>{{ 'journal.pageTitle' | translate }}</h1>
+    <h1>{{ 'journal.title' | translate }}</h1>
     <div class="date-nav-bar">
       <button mat-icon-button (click)="this.changeDateByOneDay('prev')">
         <mat-icon>arrow_back</mat-icon>
@@ -38,7 +38,7 @@
       <div>
         <mat-form-field class="journal-tag-field">
           <mat-label>
-            {{ 'journal.mangage_tags.label' | translate }}
+            {{ 'journal.manage_tags.label' | translate }}
           </mat-label>
           <mat-chip-grid #chipGrid aria-label="Enter a tag">
             @for (tag of journalForm.value.tags; track $index) {
@@ -58,7 +58,7 @@
               </mat-chip-row>
             }
             <input
-              placeholder="new tags..."
+              [placeholder]="'journal.new-tags.label' | translate"
               [matChipInputFor]="chipGrid"
               [matChipInputSeparatorKeyCodes]="MAT_CHIP_SEPARATOR"
               (matChipInputTokenEnd)="addTag($event)"
@@ -67,7 +67,7 @@
         </mat-form-field>
       </div>
       <div>
-        <button mat-flat-button>Save</button>
+        <button mat-flat-button>{{ 'journal.save.button' | translate }}</button>
       </div>
     </form>
   </div>

@@ -6,8 +6,10 @@
     <mat-icon>settings</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item routerLink="/account">Account</button>
-    <button mat-menu-item routerLink="/settings">Settings</button>
-    <button mat-menu-item (click)="logout()">Logout</button>
+    <!-- <button mat-menu-item routerLink="/account">Account</button> -->
+    <!-- <button mat-menu-item routerLink="/settings">Settings</button> -->
+    <button mat-menu-item (click)="logout()">
+      {{ 'auth.logout.button' | translate }}
+    </button>
   </mat-menu>
 </mat-toolbar>

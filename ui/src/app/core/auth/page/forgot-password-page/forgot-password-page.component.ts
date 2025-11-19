@@ -12,6 +12,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { AuthService } from '../../auth.service';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password-page',
@@ -23,8 +24,9 @@ import { RouterLink } from '@angular/router';
     MatError,
     MatFormField,
     MatButton,
-    RouterLink
-],
+    RouterLink,
+    TranslateModule,
+  ],
   templateUrl: './forgot-password-page.component.html',
   styleUrl: './forgot-password-page.component.scss',
 })

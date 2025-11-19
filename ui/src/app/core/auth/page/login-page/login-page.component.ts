@@ -32,8 +32,8 @@ import { TranslateModule } from '@ngx-translate/core';
     MatIconButton,
     MatSuffix,
     RouterLink,
-    TranslateModule
-],
+    TranslateModule,
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
 })

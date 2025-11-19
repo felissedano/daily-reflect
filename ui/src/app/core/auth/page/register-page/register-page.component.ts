@@ -17,6 +17,7 @@ import {
   passwordValidatorArray,
   samePasswordValidator,
 } from '../../auth-validators';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register-page',
@@ -27,8 +28,9 @@ import {
     AuthLayoutComponent,
     MatButton,
     MatInput,
-    RouterLink
-],
+    RouterLink,
+    TranslateModule,
+  ],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
 })

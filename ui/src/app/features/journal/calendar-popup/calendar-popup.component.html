@@ -21,7 +21,7 @@
         [class.selected-day]="isSelectedDay(day.date)"
         [class.current-month]="day.isCurrentMonth"
         (click)="selectDay(day.date)"
-        >
+      >
         {{ day.date | date: 'd' }}
       </div>
     }
@@ -29,8 +29,10 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>{{ 'cancel' | translate }}</button>
+  <button mat-button mat-dialog-close>
+    {{ 'general.cancel.button' | translate }}
+  </button>
   <button mat-button color="primary" [mat-dialog-close]="currentSelectedDate">
-    {{ 'select' | translate }}
+    {{ 'general.select.button' | translate }}
   </button>
 </mat-dialog-actions>
