@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
   imports: [MatButton],
   template: `
     <button (click)="switchLanguage()" mat-raised-button>
-      {{ currentLang === 'en' ? 'Francais' : 'English' }}
+      {{ currentLang === 'en' ? 'Français' : 'English' }}
     </button>
   `,
   styles: ``,

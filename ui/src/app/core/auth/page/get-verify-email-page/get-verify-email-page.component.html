@@ -1,20 +1,21 @@
-<app-auth-layout title="Thanks for registering">
+<app-auth-layout [title]="'auth.thanks-for-registering.title' | translate">
   <form>
     <h3>
-      Thanks for registering! We have sent an activation link to
-      {{ userEmail }}. Please click on the link in the email confirm your email
-      address. If you did not receive it, please check your spam box.
+      {{
+        'auth.thanks-for-registering-verification-email-sent.text' | translate:{userEmail}
+      }}
     </h3>
     @if (errorMessage) {
       <mat-error>{{ errorMessage }}</mat-error>
     }
     <button type="button" (click)="resendEmail()" mat-flat-button>
-      Resend verification email
+      <!-- Resend verification email -->
+      {{ 'auth.resend-verification-email.button' | translate }}
     </button>
     <br />
     <br />
     <button type="button" (click)="goToLogin()" mat-button>
-      Go back to login page
+      {{ 'auth.back-to-login.link' | translate }}
     </button>
   </form>
 </app-auth-layout>

@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { LanguageSwitcherComponent } from '../../lang/language-switcher/language-switcher.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { environment } from '../../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService, _ as __ } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-main-layout',
@@ -29,13 +29,14 @@ export class MainLayoutComponent {
     private authService: AuthService,
     private router: Router,
     private snackbar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   logout() {
     this.authService.userLogout().subscribe({
       next: (res) => {
         if (res) {
-          this.snackbar.open('Logout successful', undefined, {
+          this.snackbar.open(this.translate.instant(__('auth.logout-successful.notification')), undefined, {
             duration: 3000,
           });
           void this.router.navigate(['/auth/login']);

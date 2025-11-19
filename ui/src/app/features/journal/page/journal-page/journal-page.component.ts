@@ -3,7 +3,7 @@ import { MainLayoutComponent } from '../../../../core/layout/main-layout/main-la
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService, _ as __} from '@ngx-translate/core';
 import { MatIcon } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -50,6 +50,7 @@ export class JournalPageComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private matSnackBar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   currentSelectedDate: Date = new Date();
@@ -149,11 +150,11 @@ export class JournalPageComponent implements OnInit {
     };
     this.journalService.saveJournal(journalToSave).subscribe({
       next: (_) =>
-        this.matSnackBar.open('journal.journalSaved', undefined, {
+        this.matSnackBar.open(this.translate.instant(__('journal.journalSaved.notification')), undefined, {
           duration: 2000,
         }),
       error: (_) =>
-        this.matSnackBar.open('error.journal.journalSaveFailed', undefined, {
+        this.matSnackBar.open(this.translate.instant(__('journal.journalSaveFailed.error')), undefined, {
           duration: 2000,
         }),
     });
@@ -181,7 +182,7 @@ export class JournalPageComponent implements OnInit {
         // Getting unauthorized code, means session expired
         if (status === 401) {
           void this.router.navigate(['auth/login']);
-          this.matSnackBar.open('Session expried', undefined, {
+          this.matSnackBar.open(this.translate.instant(__('auth.session-expired-or-not-logged-in.error')), undefined, {
             duration: 2000,
           });
         } else {
