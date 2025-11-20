@@ -2,13 +2,12 @@ package com.felissedano.dailyreflect.auth.domain.model;
 
 import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table( name = "roles")
+@Table(name = "roles")
 public class Role {
 
     @Id
@@ -29,9 +28,7 @@ public class Role {
         this.name = name;
     }
 
-    public Role() {
-
-    }
+    public Role() {}
 
     public long getId() {
         return id;

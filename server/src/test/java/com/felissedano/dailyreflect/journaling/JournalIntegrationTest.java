@@ -3,7 +3,7 @@ package com.felissedano.dailyreflect.journaling;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 
 import com.felissedano.dailyreflect.TestContainerConfiguration;
 import com.felissedano.dailyreflect.auth.domain.model.User;
@@ -19,10 +19,8 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,12 +110,6 @@ public class JournalIntegrationTest {
         return new AuthResult(xsrfToken, sessionId);
     }
 
-    private Date getDateFromString(String dateString, boolean inputHasNoTime) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        String timePortion = inputHasNoTime ? "T00:00:00.000+00:00" : "";
-        return sdf.parse(dateString + timePortion);
-    }
-
     @Test
     public void tmp_testCanSaveMockJournal() {
         AuthResult authResult = loginUserForTest();
@@ -152,7 +144,6 @@ public class JournalIntegrationTest {
                 .statusCode(201);
 
         Profile profile = profileRepository.findByUserEmail(user.getEmail()).get();
-        Date date = getDateFromString("2025-01-01", true);
 
         Journal journal = journalRepository
                 .findByDateAndProfile(LocalDate.of(2025, 1, 1), profile)
@@ -181,7 +172,9 @@ public class JournalIntegrationTest {
 
         Journal journal2 = journalRepository.findById(journal.getId()).get();
         assertThat(journal2.getContent()).isEqualTo("New Content");
-        assertThat(journal2.getTags()).isEqualTo(Arrays.asList("new tag", "tag3"));
+        // NOTE: Due to weird implementation of hibernate `equals()` in PersistentBag class, it is not symmetric
+        // So must compare a List against PersistentBag instead of reverse.
+        assertThat(Arrays.asList("new tag", "tag3")).isEqualTo(journal2.getTags());
     }
 
     @Test
@@ -224,20 +217,16 @@ public class JournalIntegrationTest {
                 .when()
                 .get("api/journal/date/1970-12-31")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associated with the user not found."));
+                .statusCode(200)
+                .body(containsString("null"));
 
         given().sessionId(authResult.sessionId())
                 .header(new Header("Accept-Language", "fr"))
                 .when()
                 .get("api/journal/date/1970-12-31")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associé à cet utilisateur introuvable."));
+                .statusCode(200)
+                .body(containsString("null"));
     }
 
     @Test
@@ -295,14 +284,63 @@ public class JournalIntegrationTest {
                 .when()
                 .get("api/journal/date/2025-02-02")
                 .then()
-                .statusCode(404)
-                .body("title", containsString("Journal Not Found"))
-                .body("type", containsString("/problems/journal/profile-not-found"))
-                .body("detail", containsString("Journal associated with the user not found."));
+                .statusCode(200)
+                .body(containsString("null"));
 
         // Check that the journal also does not exist in the backend anymore
         Optional<Journal> journalDelOpt = journalRepository.findByDateAndProfile(LocalDate.of(2025, 2, 2), profile);
         assertThat(journalDelOpt.isEmpty());
+    }
+
+    @Test
+    public void whenGetJournalsOfAYearMonth_shouldGetTheJournals() {
+        AuthResult authResult = loginUserForTest();
+
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                        {
+                            "content": "Journal for march 1st",
+                            "tags": ["a tag"],
+                            "date": "2025-03-01"
+                        }
+                        """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        given().sessionId(authResult.sessionId)
+                .contentType(ContentType.JSON)
+                .header(new Header("X-XSRF-TOKEN", authResult.xsrfToken()))
+                .cookie("XSRF-TOKEN", authResult.xsrfToken())
+                .body(
+                        """
+                        {
+                            "content": "Journal for march 31st",
+                            "tags": ["a tag"],
+                            "date": "2025-03-31"
+                        }
+                        """)
+                .when()
+                .post("api/journal/edit")
+                .then()
+                .statusCode(201);
+
+        JournalDto[] journalDtos = given().sessionId(authResult.sessionId())
+                .when()
+                .get("api/journal/year-month/2025-03")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(JournalDto[].class);
+
+        assertThat(journalDtos.length).isIn(2);
+        assertThat(journalDtos[0].content().contains("Journal for march"));
     }
 
     private record AuthResult(String xsrfToken, String sessionId) {}

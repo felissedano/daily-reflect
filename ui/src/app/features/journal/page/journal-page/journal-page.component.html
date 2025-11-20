@@ -1,30 +1,74 @@
-<app-main-layout/>
+<app-main-layout />
 <div class="journal-container">
-
-    <div class="date-navigator">
-        <h1>{{'journal.pageTitle' | translate}}</h1>
-        <div class="date-nav-bar">
-            <button mat-icon-button><mat-icon>arrow_back</mat-icon></button>
-            <h3 class="date-display">{{currentSelectedDate | date:'EEEE,MMM d,y'}}</h3>
-            <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
-        </div>
-        <div>
-            <button mat-icon-button aria-label="Open calendar" (click)="openCalendar()">
-                <mat-icon>calendar_today</mat-icon>
-            </button>
-        </div>
+  <div class="date-navigator-container">
+    <h1>{{ 'journal.title' | translate }}</h1>
+    <div class="date-nav-bar">
+      <button mat-icon-button (click)="this.changeDateByOneDay('prev')">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3 class="date-display">
+        {{ currentSelectedDate | date: 'EE, MMM d, y' }}
+      </h3>
+      <button mat-icon-button (click)="this.changeDateByOneDay('next')">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
     </div>
-
-    <div class="journal-form-container">
-        <form [formGroup]="journalForm">
-            <mat-form-field class="journal-content-field">
-                <textarea matInput formControlName="content" name="content"></textarea>
-            </mat-form-field>
-            <br>
-            <button mat-flat-button><mat-icon>add</mat-icon> {{'journal.addLabel' | translate}}</button>
-        </form>
-        <br>
-        <button (click)="refreshSession()" mat-flat-button>Save</button>
+    <div>
+      <button
+        mat-icon-button
+        aria-label="Open calendar"
+        (click)="openCalendar()"
+      >
+        <mat-icon>calendar_today</mat-icon>
+      </button>
     </div>
+  </div>
 
+  <div class="journal-form-container">
+    <form [formGroup]="journalForm" (ngSubmit)="saveJournal()">
+      <div>
+        <mat-form-field class="journal-content-field">
+          <textarea
+            matInput
+            formControlName="content"
+            name="content"
+          ></textarea>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="journal-tag-field">
+          <mat-label>
+            {{ 'journal.manage_tags.label' | translate }}
+          </mat-label>
+          <mat-chip-grid #chipGrid aria-label="Enter a tag">
+            @for (tag of journalForm.value.tags; track $index) {
+              <mat-chip-row
+                (removed)="removeTag($index)"
+                [editable]="true"
+                (edited)="editTag($index, $event)"
+                [aria-description]="'press enter to edit ' + tag"
+              >
+                <button matChipEdit [attr.aria-label]="'edit ' + tag">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                {{ tag }}
+                <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            }
+            <input
+              [placeholder]="'journal.new-tags.label' | translate"
+              [matChipInputFor]="chipGrid"
+              [matChipInputSeparatorKeyCodes]="MAT_CHIP_SEPARATOR"
+              (matChipInputTokenEnd)="addTag($event)"
+            />
+          </mat-chip-grid>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-flat-button>{{ 'journal.save.button' | translate }}</button>
+      </div>
+    </form>
+  </div>
 </div>

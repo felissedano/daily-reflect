@@ -3,6 +3,8 @@ package com.felissedano.dailyreflect.auth.config;
 import com.felissedano.dailyreflect.auth.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.function.Supplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -23,9 +25,6 @@ import org.springframework.security.web.csrf.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 @Configuration
 @EnableWebSecurity
@@ -48,11 +47,9 @@ public class SecurityConfiguration {
         return new UserDetailsServiceImpl();
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder) {
+            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -87,36 +84,35 @@ public class SecurityConfiguration {
         return source;
     }
 
-
     @Bean
     public CsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repository = new CookieCsrfTokenRepository();
-        repository.setCookieCustomizer(cookie-> {
+        repository.setCookieCustomizer(cookie -> {
             cookie.httpOnly(false);
         });
         return repository;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity, UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource)
+            throws Exception {
         httpSecurity
-//                .csrf(AbstractHttpConfigurer::disable)
-                .csrf(csrf ->
-                    csrf
-                            .csrfTokenRepository(csrfTokenRepository())
-                            .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
-                            .ignoringRequestMatchers(matchers -> {
-                                String path = matchers.getServletPath();
-                                return path.startsWith("api/public");
-                            })
-                )
+                //                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
+                        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
+                        .ignoringRequestMatchers(matchers -> {
+                            String path = matchers.getServletPath();
+                            return path.startsWith("api/public");
+                        }))
                 .cors((cors) -> cors.configurationSource(urlBasedCorsConfigurationSource))
-                .authorizeHttpRequests((reqMatcherRegistry) ->
-                        reqMatcherRegistry
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests((reqMatcherRegistry) -> reqMatcherRegistry
+                        .requestMatchers("/")
+                        .permitAll()
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                         .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
@@ -127,8 +123,7 @@ public class SecurityConfiguration {
                         })
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
-                        .permitAll()
-                )
+                        .permitAll())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.getWriter().write("{\"message\": \"" + authException.getMessage() + "\"}");
@@ -138,11 +133,12 @@ public class SecurityConfiguration {
                     session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                 })
                 .securityContext(context -> {
-                    context.requireExplicitSave(false); // SOMEHOW I NEED THIS FOR THE SESSION TO ACUTALLY PERSIST WHY I CAN'T FIND ANY RESOURCE TELLING ME THIS???
+                    context.requireExplicitSave(
+                            false); // SOMEHOW I NEED THIS FOR THE SESSION TO ACUTALLY PERSIST WHY I CAN'T FIND ANY
+                    // RESOURCE TELLING ME THIS???
                 });
         return httpSecurity.build();
     }
-
 }
 
 final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {

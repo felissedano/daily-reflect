@@ -1,5 +1,8 @@
-import {HttpInterceptorFn, HttpXsrfTokenExtractor} from '@angular/common/http';
-import {inject} from "@angular/core";
+import {
+  HttpInterceptorFn,
+  HttpXsrfTokenExtractor,
+} from '@angular/common/http';
+import { inject } from '@angular/core';
 
 export const csrfInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenExtractor = inject(HttpXsrfTokenExtractor);

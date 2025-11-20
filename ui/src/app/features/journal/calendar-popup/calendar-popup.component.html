@@ -1,29 +1,38 @@
 <mat-dialog-content>
-    <div class="calendar-header">
-        <button mat-icon-button (click)="previousMonth()">
-            <mat-icon>chevron_left</mat-icon>
-        </button>
-        <h2 class="month-title">{{ currentMonth | date:'MMMM y' }}</h2>
-        <button mat-icon-button (click)="nextMonth()">
-            <mat-icon>chevron_right</mat-icon>
-        </button>
-    </div>
+  <div class="calendar-header">
+    <button mat-icon-button (click)="previousMonth()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <h2 class="month-title">{{ currentMonth | date: 'MMMM y' }}</h2>
+    <button mat-icon-button (click)="nextMonth()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
 
-    <div class="calendar-grid">
-        <div class="day-header" *ngFor="let day of weekDayNames">{{ day }}</div>
+  <div class="calendar-grid">
+    @for (day of weekDayNames; track day) {
+      <div class="day-header">{{ day }}</div>
+    }
 
-        <div class="day-cell"
-             *ngFor="let day of calendarDays"
-             [class.has-journal]="hasJournal(day.date)"
-             [class.selected-day]="isSelectedDay(day.date)"
-             [class.current-month]="day.isCurrentMonth"
-             (click)="selectDay(day.date)">
-            {{ day.date | date:'d' }}
-        </div>
-    </div>
+    @for (day of calendarDays; track day) {
+      <div
+        class="day-cell"
+        [class.has-journal]="hasJournal(day.date)"
+        [class.selected-day]="isSelectedDay(day.date)"
+        [class.current-month]="day.isCurrentMonth"
+        (click)="selectDay(day.date)"
+      >
+        {{ day.date | date: 'd' }}
+      </div>
+    }
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>{{'cancel' | translate}}</button>
-    <button mat-button color="primary" [mat-dialog-close]="currentSelectedDate">{{'select' | translate}}</button>
+  <button mat-button mat-dialog-close>
+    {{ 'general.cancel.button' | translate }}
+  </button>
+  <button mat-button color="primary" [mat-dialog-close]="currentSelectedDate">
+    {{ 'general.select.button' | translate }}
+  </button>
 </mat-dialog-actions>

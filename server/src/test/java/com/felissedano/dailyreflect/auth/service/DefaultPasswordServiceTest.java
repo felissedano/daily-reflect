@@ -1,21 +1,20 @@
 package com.felissedano.dailyreflect.auth.service;
 
+import static org.mockito.Mockito.*;
+
 import com.felissedano.dailyreflect.auth.domain.model.PasswordResetToken;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import com.felissedano.dailyreflect.auth.domain.repository.PasswordResetTokenRepository;
 import com.felissedano.dailyreflect.auth.domain.repository.UserRepository;
 import com.felissedano.dailyreflect.auth.service.impl.DefaultPasswordService;
 import com.felissedano.dailyreflect.common.service.MailService;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
-
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultPasswordServiceTest {
@@ -35,7 +34,6 @@ class DefaultPasswordServiceTest {
     @InjectMocks
     DefaultPasswordService passwordService;
 
-
     @Test
     void whenSendResetEmailToExistingUser_shouldSendWithSuccess() {
         // given
@@ -47,7 +45,7 @@ class DefaultPasswordServiceTest {
 
         // then
         verify(passwordResetTokenRepository, times(1)).save(any());
-        verify(mailService, times(1)).sendLocaleTextEmail(eq("john@example.com"),anyString(),anyString(),any());
+        verify(mailService, times(1)).sendLocaleTextEmail(eq("john@example.com"), anyString(), anyString(), any());
     }
 
     @Test
@@ -61,8 +59,7 @@ class DefaultPasswordServiceTest {
 
         // then
         verify(passwordResetTokenRepository, never()).findByUserEmail(anyString());
-        verify(mailService, never()).sendLocaleTextEmail(any(),any(),any(),any());
-
+        verify(mailService, never()).sendLocaleTextEmail(any(), any(), any(), any());
     }
 
     @Test
@@ -81,8 +78,5 @@ class DefaultPasswordServiceTest {
         // then
         verify(passwordResetTokenRepository, times(1)).delete(resetToken);
         verify(passwordResetTokenRepository, times(1)).save(any(PasswordResetToken.class));
-
     }
-
-
 }

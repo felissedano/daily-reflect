@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "i18n:init": "ngx-translate-extract --input ./src --output ./public/i18n/template.json --key-as-default-value --replace --format json",
+    "i18n:extract": "ngx-translate-extract --input ./src --output ./public/i18n/{en,fr}.json --clean --format json"
   },
   "private": true,
   "dependencies": {
@@ -31,13 +33,21 @@
     "@angular/build": "^20.3.3",
     "@angular/cli": "^20.3.3",
     "@angular/compiler-cli": "^20.3.2",
+    "@eslint/css": "^0.14.1",
+    "@eslint/js": "^9.39.1",
     "@types/jasmine": "~5.1.0",
+    "@vendure/ngx-translate-extract": "^10.1.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "jasmine-core": "~5.2.0",
+    "jiti": "^2.6.1",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.4"
   }
 }

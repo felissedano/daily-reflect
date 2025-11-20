@@ -8,6 +8,8 @@
       nodejs_22
       bashInteractive
       nodePackages."@angular/cli"
+      nodePackages.prettier
+      eslint
     ];
 
     shellHook = ''

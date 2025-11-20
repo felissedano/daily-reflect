@@ -1,13 +1,13 @@
-//package com.felissedano.dailyreflect.common.config;
+// package com.felissedano.dailyreflect.common.config;
 //
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.format.support.DefaultFormattingConversionService;
-//import org.springframework.format.support.FormattingConversionService;
-//import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.format.support.DefaultFormattingConversionService;
+// import org.springframework.format.support.FormattingConversionService;
+// import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 //
-//@Configuration
-//public class DateTimeConfig {
+// @Configuration
+// public class DateTimeConfig {
 //
 //    @Bean
 //    public FormattingConversionService mvcConversionService() {
@@ -24,4 +24,4 @@
 //
 //        return new DefaultFormattingConversionService(true);
 //    }
-//}
+// }

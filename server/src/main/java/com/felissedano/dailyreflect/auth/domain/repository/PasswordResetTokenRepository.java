@@ -3,11 +3,10 @@ package com.felissedano.dailyreflect.auth.domain.repository;
 import com.felissedano.dailyreflect.auth.domain.model.PasswordResetToken;
 import com.felissedano.dailyreflect.auth.domain.model.User;
 import jakarta.validation.constraints.Email;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 

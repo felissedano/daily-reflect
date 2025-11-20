@@ -3,11 +3,10 @@ package com.felissedano.dailyreflect.auth.runner;
 import com.felissedano.dailyreflect.auth.domain.model.Role;
 import com.felissedano.dailyreflect.auth.domain.model.enums.RoleType;
 import com.felissedano.dailyreflect.auth.domain.repository.RoleRepository;
+import java.util.Optional;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class AuthDataLoader implements ApplicationRunner {
@@ -30,7 +29,5 @@ public class AuthDataLoader implements ApplicationRunner {
         if (roleAdmin.isEmpty()) {
             roleRepository.save(new Role(RoleType.ROLE_ADMIN));
         }
-
-
     }
 }

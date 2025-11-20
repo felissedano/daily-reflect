@@ -15,5 +15,4 @@ public class UserCreatedEvent extends ApplicationEvent {
     public User getUser() {
         return user;
     }
-
 }

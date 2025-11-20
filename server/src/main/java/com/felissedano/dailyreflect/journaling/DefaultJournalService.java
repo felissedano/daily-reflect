@@ -4,7 +4,10 @@ import com.felissedano.dailyreflect.profile.Profile;
 import com.felissedano.dailyreflect.profile.ProfileNotFoundException;
 import com.felissedano.dailyreflect.profile.ProfileRepository;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +46,7 @@ public class DefaultJournalService implements JournalService {
     }
 
     @Override
-    public JournalDto getJournalDto(LocalDate date, String userEmail) {
+    public Optional<JournalDto> getJournalDto(LocalDate date, String userEmail) {
         Profile profile = profileRepository
                 .findByUserEmail(userEmail)
                 .orElseThrow(
@@ -52,11 +55,7 @@ public class DefaultJournalService implements JournalService {
 
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
 
-        if (journalOpt.isEmpty())
-            throw new JournalNotFoundException("Journal associated with this user and date not found");
-        Journal journal = journalOpt.get();
-
-        return new JournalDto(journal.getContent(), journal.getTags(), journal.getDate());
+        return journalOpt.map(journal -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate()));
     }
 
     @Override
@@ -71,5 +70,23 @@ public class DefaultJournalService implements JournalService {
         if (journalOpt.isPresent()) {
             journalRepository.deleteById(journalOpt.get().getId());
         }
+    }
+
+    @Override
+    public List<JournalDto> getJournalsByYearMonth(YearMonth yearMonth, String userEmail) {
+        Profile profile = profileRepository
+                .findByUserEmail(userEmail)
+                .orElseThrow(
+                        () -> new ProfileNotFoundException(
+                                "Profile associated with the user does not exist. Likely something went wrong in the user creation process"));
+
+        List<Journal> journals =
+                journalRepository.findByProfileAndDateBetween(profile, yearMonth.atDay(1), yearMonth.atEndOfMonth());
+
+        List<JournalDto> journalDtos = journals.stream()
+                .map((journal) -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate()))
+                .collect(Collectors.toList());
+
+        return journalDtos;
     }
 }

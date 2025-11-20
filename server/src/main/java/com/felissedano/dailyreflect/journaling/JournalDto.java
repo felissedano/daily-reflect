@@ -1,7 +1,6 @@
 package com.felissedano.dailyreflect.journaling;
 
-import java.util.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
-public record JournalDto(String content, ArrayList<String> tags, LocalDate date) {}
+public record JournalDto(String content, List<String> tags, LocalDate date) {}

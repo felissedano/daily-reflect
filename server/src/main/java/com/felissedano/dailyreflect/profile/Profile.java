@@ -13,10 +13,7 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(
-            optional = false,
-            fetch = FetchType.LAZY
-    )
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
     public Profile() {}
@@ -24,5 +21,4 @@ public class Profile {
     public Profile(User user) {
         this.user = user;
     }
-
 }

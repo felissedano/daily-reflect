@@ -2,16 +2,13 @@ package com.felissedano.dailyreflect.common.service.impl;
 
 import com.felissedano.dailyreflect.common.service.MailService;
 import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
-import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
 
 @Service
 public class DefaultMailService implements MailService {
@@ -25,10 +22,10 @@ public class DefaultMailService implements MailService {
     }
 
     @Override
-    public boolean sendLocaleTextEmail(String to, String subjectKey, String contentKey, Object [] contentArgs) {
+    public boolean sendLocaleTextEmail(String to, String subjectKey, String contentKey, Object[] contentArgs) {
         Locale locale = LocaleContextHolder.getLocale();
         String title = messageSource.getMessage(subjectKey, null, locale);
-        String message =  messageSource.getMessage(contentKey, contentArgs, locale);
+        String message = messageSource.getMessage(contentKey, contentArgs, locale);
         MimeMessage mailMessage = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
@@ -47,7 +44,6 @@ public class DefaultMailService implements MailService {
     }
 
     public boolean sendTextEmail(String to, String subject, String content) {
-        return false; //TODO
-
+        return false; // TODO
     }
 }
