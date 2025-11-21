@@ -3,7 +3,7 @@
     <button mat-icon-button (click)="previousMonth()">
       <mat-icon>chevron_left</mat-icon>
     </button>
-    <h2 class="month-title">{{ currentMonth | date: 'MMMM y' }}</h2>
+    <h2 class="month-title">{{ currentMonth | localizedDate: 'MMMM y' }}</h2>
     <button mat-icon-button (click)="nextMonth()">
       <mat-icon>chevron_right</mat-icon>
     </button>

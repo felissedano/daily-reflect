@@ -43,5 +43,12 @@
 	"journal.journalSaved.notification": "Journal enregistré",
 	"journal.journalSaveFailed.error": "Échec de l'enregistrement",
 	"auth.session-expired-or-not-logged-in.error": "Session expirée ou non connecté",
+	"general.sunday.short-label": "dim",
+	"general.monday.short-label": "lun",
+	"general.tuesday.short-label": "mar",
+	"general.wednesday.short-label": "mer",
+	"general.thursday.short-label": "jeu",
+	"general.friday.short-label": "ven",
+	"general.saturday.short-label": "sam",
 	"auth.logout-successful.notification": "Déconnexion réussie"
 }
