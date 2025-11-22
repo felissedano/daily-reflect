@@ -4,7 +4,6 @@ import {
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
-  MatDialogRef,
 } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { Journal } from '../journal.model';
@@ -12,7 +11,8 @@ import { JournalService } from '../journal.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { stringfyDate } from '../../../shared/util/dateUtil';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService, _ as __ } from '@ngx-translate/core';
+import { LocalizedDatePipe } from '../../../shared/localized-date.pipe';
 
 interface CalendarDay {
   date: Date;
@@ -30,7 +30,9 @@ interface CalendarDay {
     MatIconButton,
     MatIcon,
     TranslatePipe,
+    LocalizedDatePipe,
   ],
+  providers: [DatePipe],
   templateUrl: './calendar-popup.component.html',
   styleUrl: './calendar-popup.component.scss',
 })
@@ -42,12 +44,21 @@ export class CalendarPopupComponent implements OnInit {
   journalByDate: { [key: string]: Journal } = {};
 
   constructor(
-    private dialogRef: MatDialogRef<CalendarPopupComponent>,
     @Inject(MAT_DIALOG_DATA) private data: { currentSelectedDate: Date },
     private journalService: JournalService,
+    private translate: TranslateService,
   ) {
     this.currentMonth = new Date(data.currentSelectedDate);
     this.currentSelectedDate = new Date(data.currentSelectedDate);
+    this.weekDayNames = [
+      this.translate.instant(__('general.sunday.short-label')),
+      this.translate.instant(__('general.monday.short-label')),
+      this.translate.instant(__('general.tuesday.short-label')),
+      this.translate.instant(__('general.wednesday.short-label')),
+      this.translate.instant(__('general.thursday.short-label')),
+      this.translate.instant(__('general.friday.short-label')),
+      this.translate.instant(__('general.saturday.short-label')),
+    ];
   }
 
   ngOnInit(): void {
