@@ -43,5 +43,12 @@
 	"journal.journalSaved.notification": "Journal saved",
 	"journal.journalSaveFailed.error": "Failed to save journal",
 	"auth.session-expired-or-not-logged-in.error": "Session expired or not logged in",
+	"general.sunday.short-label": "Sun",
+	"general.monday.short-label": "Mon",
+	"general.tuesday.short-label": "Tue",
+	"general.wednesday.short-label": "Wed",
+	"general.thursday.short-label": "Thu",
+	"general.friday.short-label": "Fri",
+	"general.saturday.short-label": "Sat",
 	"auth.logout-successful.notification": "Logout successful"
 }
