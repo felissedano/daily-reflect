@@ -69,7 +69,7 @@ public class JournalIntegrationTest {
     public void setup() {
         RestAssured.port = this.serverPort;
         if (user == null) {
-            UserDto userDto = new UserDto("journal@integration.test", "journalintegration", "password");
+            UserDto userDto = new UserDto("journal@integration.test", "journalintegration", "password", "dek", "salt", "iv");
             User regUser = userService.registerNormalUser(userDto);
             regUser.setEnabled(true);
             user = userRepository.save(regUser);

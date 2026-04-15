@@ -1,0 +1,2 @@
+ALTER TABLE journals
+    ADD iv VARCHAR(255);

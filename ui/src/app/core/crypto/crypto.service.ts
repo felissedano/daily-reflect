@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { EncryptedDekProperties } from './encrypted-dek-properties';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,13 @@ export class CryptoService {
 
   private dataEncryptionKey: CryptoKey | null = null;
 
-  async encryptData(data: string | string[]) {
+  async encryptData(
+    data: string,
+    prevIv: Uint8Array<ArrayBuffer> | null = null,
+  ): Promise<{ cipherText: string; iv: string }> {
     if (this.dataEncryptionKey == null) throw Error('DEK is not initialized');
 
-    const iv = this.randomBytes(this.IV_LENGTH);
+    const iv = prevIv ?? this.randomBytes(this.IV_LENGTH);
 
     const encodedData = this.encoder.encode(JSON.stringify(data));
 
@@ -34,10 +38,7 @@ export class CryptoService {
     };
   }
 
-  async decryptData(
-    cipherText: string,
-    iv: string,
-  ): Promise<string | string[]> {
+  async decryptData(cipherText: string, iv: string): Promise<string> {
     if (this.dataEncryptionKey == null)
       throw new Error('DEK is not initialized');
 
@@ -165,13 +166,7 @@ export class CryptoService {
     return btoa(String.fromCharCode(...new Uint8Array(buffer)));
   }
 
-  private fromBase64(b64: string): ArrayBuffer {
+  fromBase64(b64: string): ArrayBuffer {
     return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
   }
-}
-
-interface EncryptedDekProperties {
-  encryptedDek: string;
-  salt: string;
-  iv: string;
 }

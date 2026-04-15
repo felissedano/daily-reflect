@@ -36,11 +36,13 @@ public class DefaultJournalService implements JournalService {
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(journalDto.date(), profile);
         if (journalOpt.isEmpty()) {
             Journal journal = new Journal(journalDto.date(), journalDto.content(), journalDto.tags(), profile);
+            journal.setIv(journalDto.iv());
             journalRepository.save(journal);
         } else {
             Journal curJournal = journalOpt.get();
             curJournal.setContent(journalDto.content());
             curJournal.setTags(journalDto.tags());
+            curJournal.setIv(journalDto.iv());
             journalRepository.save(curJournal);
         }
     }
@@ -55,7 +57,7 @@ public class DefaultJournalService implements JournalService {
 
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
 
-        return journalOpt.map(journal -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate()));
+        return journalOpt.map(journal -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate(),journal.getIv()));
     }
 
     @Override
@@ -67,9 +69,7 @@ public class DefaultJournalService implements JournalService {
                                 "Profile associated with the user does not exist. Likely something went wrong in the user creation process"));
 
         Optional<Journal> journalOpt = journalRepository.findByDateAndProfile(date, profile);
-        if (journalOpt.isPresent()) {
-            journalRepository.deleteById(journalOpt.get().getId());
-        }
+        journalOpt.ifPresent(journal -> journalRepository.deleteById(journal.getId()));
     }
 
     @Override
@@ -83,10 +83,8 @@ public class DefaultJournalService implements JournalService {
         List<Journal> journals =
                 journalRepository.findByProfileAndDateBetween(profile, yearMonth.atDay(1), yearMonth.atEndOfMonth());
 
-        List<JournalDto> journalDtos = journals.stream()
-                .map((journal) -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate()))
+        return journals.stream()
+                .map((journal) -> new JournalDto(journal.getContent(), journal.getTags(), journal.getDate(), journal.getIv()))
                 .collect(Collectors.toList());
-
-        return journalDtos;
     }
 }

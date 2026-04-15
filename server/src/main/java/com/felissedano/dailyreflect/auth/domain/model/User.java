@@ -42,6 +42,15 @@ public class User {
     @Column(name = "code_expiration", nullable = true)
     private Date codeExpiration;
 
+    @Column(name = "encrypted_dek", nullable = false)
+    private String encryptedDek;
+
+    @Column(name = "salt", nullable = false)
+    private String salt;
+
+    @Column(name = "iv", nullable = false)
+    private String iv;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -150,4 +159,29 @@ public class User {
     public void setCodeExpiration(Date codeExpiration) {
         this.codeExpiration = codeExpiration;
     }
+
+    public String getEncryptedDek() {
+        return encryptedDek;
+    }
+
+    public void setEncryptedDek(String encryptedDek) {
+        this.encryptedDek = encryptedDek;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getIv() {
+        return iv;
+    }
+
+    public void setIv(String iv) {
+        this.iv = iv;
+    }
+
 }

@@ -67,6 +67,9 @@ public class DefaultUserService implements UserService {
         roles.add(roleUser);
 
         User newUser = new User(userDto.username(), userDto.email(), encryptedPassword, roles);
+        newUser.setIv(userDto.iv());
+        newUser.setSalt(userDto.salt());
+        newUser.setEncryptedDek(userDto.encryptedDek());
 
         String verificationToken = AuthUtils.generateVerificationToken();
         newUser.setVerificationCode(verificationToken);
