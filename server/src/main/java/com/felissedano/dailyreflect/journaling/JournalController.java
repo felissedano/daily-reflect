@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -40,7 +42,7 @@ public class JournalController {
 
     @GetMapping("date/{date}")
     public ResponseEntity<Optional<JournalDto>> getJournalByDate(
-            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<JournalDto> journalDtoOpt = journalService.getJournalDto(date, principal.getUsername());
@@ -49,7 +51,7 @@ public class JournalController {
 
     @DeleteMapping("date/{date}")
     public ResponseEntity<Void> deleteJournal(
-            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -59,7 +61,7 @@ public class JournalController {
 
     @GetMapping("year-month/{yearMonth}")
     public ResponseEntity<List<JournalDto>> getJournals(
-            @PathVariable("yearMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -69,7 +71,7 @@ public class JournalController {
     }
 
     @PostMapping("edit")
-    public ResponseEntity<Void> editJournal(@RequestBody JournalDto journalDto) {
+    public ResponseEntity<Void> editJournal(@RequestBody @Valid JournalDto journalDto) {
         UserDetails principal = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         journalService.createOrUpdateJournal(journalDto, principal.getUsername());

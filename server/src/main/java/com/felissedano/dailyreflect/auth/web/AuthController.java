@@ -50,11 +50,6 @@ public class AuthController {
         this.messageSource = messageSource;
     }
 
-    @GetMapping("/user")
-    public String user() {
-        return userService.findAll().toString();
-    }
-
     @PostMapping("/login")
     public ResponseEntity<GenericResponseDTO> login(@RequestBody LoginDto loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
