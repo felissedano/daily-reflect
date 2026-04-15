@@ -67,6 +67,17 @@ export class JournalService {
         const prevIv: Uint8Array<ArrayBuffer> = new Uint8Array(
           this.cryptoService.fromBase64(value.iv),
         );
+
+        // Do not do fork join if tags len is 0 as forkJoin will not execute
+        if (journal.tags.length === 0) {
+          return of({
+            content: value.cipherText,
+            tags: [],
+            iv: value.iv,
+            date: stringfyDate(journal.date),
+          });
+        }
+
         return forkJoin(
           journal.tags.map((tag) =>
             this.cryptoService.encryptData(tag, prevIv),
@@ -96,17 +107,23 @@ export class JournalService {
 
     return forkJoin({
       content: from(this.cryptoService.decryptData(journalDto.content, iv)),
-      tags: forkJoin<string[]>(
-        journalDto.tags.map((tag) =>
-          from(this.cryptoService.decryptData(tag, iv)),
-        ),
-      ),
+      // Do not do fork join if tags len is 0 as forkJoin will not execute
+      tags:
+        journalDto.tags.length === 0
+          ? of([])
+          : forkJoin<string[]>(
+              journalDto.tags.map((tag) =>
+                from(this.cryptoService.decryptData(tag, iv)),
+              ),
+            ),
     }).pipe(
-      map(({ content, tags }): Journal => ({
-        tags: tags,
-        content: content,
-        date: new Date(journalDto.date),
-      })),
+      map(
+        ({ content, tags }): Journal => ({
+          tags: tags,
+          content: content,
+          date: new Date(journalDto.date),
+        }),
+      ),
     );
   }
 }
