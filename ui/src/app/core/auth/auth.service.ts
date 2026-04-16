@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { map } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
+import { CryptoService } from '../crypto/crypto.service';
+import { EncryptedDekProperties } from '../crypto/encrypted-dek-properties';
 
 @Injectable({
   providedIn: 'root',
@@ -9,19 +11,41 @@ import { map } from 'rxjs';
 export class AuthService {
   private API_URL = environment.baseUrl;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private cryptoService: CryptoService,
+  ) {}
 
   // On login success, add event listen to see if user interacted with the app, if yes, then extent session duration periodically
   userLogin(email: string, password: string) {
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.post(
-      this.API_URL + 'api/auth/login',
-      { email: email, password: password },
-      {
-        headers: headers,
-        observe: 'response',
-      },
-    );
+    return this.httpClient
+      .post(
+        this.API_URL + 'api/auth/login',
+        { email: email, password: password },
+        {
+          headers: headers,
+          observe: 'response',
+        },
+      )
+      .pipe(
+        switchMap((_) =>
+          this.httpClient.get<EncryptedDekProperties>(
+            this.API_URL + 'api/user/dek',
+            { observe: 'body' },
+          ),
+        ),
+        switchMap((dekProperties) =>
+          from(
+            this.cryptoService.decryptAndSetDek(
+              password,
+              dekProperties.encryptedDek,
+              dekProperties.salt,
+              dekProperties.iv,
+            ),
+          ),
+        ),
+      );
   }
 
   userLogout() {
@@ -44,12 +68,25 @@ export class AuthService {
       .pipe(map((res) => (res.body === null ? false : res.body)));
   }
 
-  registerUser(user: { email: string; password: string; username: string }) {
+  registerUser(user: {
+    email: string;
+    password: string;
+    username: string;
+  }): Observable<HttpResponse<object>> {
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.post(this.API_URL + 'api/auth/register', user, {
-      observe: 'response',
-      headers: headers,
-    });
+    const dekProperties$ = from(
+      this.cryptoService.generateNewDekEncrypted(user.password),
+    );
+    console.log('Key created, about to create user');
+    return dekProperties$.pipe(
+      map((dek) => ({ ...user, ...dek })),
+      switchMap((userAndKey) =>
+        this.httpClient.post(this.API_URL + 'api/auth/register', userAndKey, {
+          observe: 'response',
+          headers: headers,
+        }),
+      ),
+    );
   }
 
   resendEmailVerification(email: string) {

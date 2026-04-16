@@ -33,6 +33,9 @@ public class ProfileIntegrationTest {
     @Test
     public void whenUserCreated_aNewProfileShouldBeCreated() {
         User user = new User("profileintegration", "profileintegration@test.com", "NOOP");
+        user.setIv("iv");
+        user.setEncryptedDek("dek");
+        user.setSalt("salt");
         userRepository.saveAndFlush(user);
         publisher.publishEvent(new UserCreatedEvent(this, user));
         assertThat(userRepository.findByEmail("profileintegration@test.com").isPresent())
@@ -51,6 +54,9 @@ public class ProfileIntegrationTest {
     @Test
     public void whenDeletingAProfile_userShouldRemain() {
         User user = new User("profileintegration2", "profileintegration2@test.com", "NOOP");
+        user.setIv("iv");
+        user.setEncryptedDek("dek");
+        user.setSalt("salt");
         userRepository.save(user);
         Profile profile = new Profile(user);
         profileRepository.save(profile);

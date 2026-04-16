@@ -8,4 +8,5 @@ export interface JournalDto {
   date: string;
   content: string;
   tags: string[];
+  iv: string;
 }

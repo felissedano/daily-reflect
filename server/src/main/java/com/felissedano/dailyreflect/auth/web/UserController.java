@@ -1,5 +1,8 @@
 package com.felissedano.dailyreflect.auth.web;
 
+import com.felissedano.dailyreflect.auth.domain.model.User;
+import com.felissedano.dailyreflect.auth.service.UserService;
+import com.felissedano.dailyreflect.auth.service.dto.EncryptionPropertiesDTO;
 import com.felissedano.dailyreflect.common.GenericResponseDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -8,9 +11,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("dek")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public EncryptionPropertiesDTO getEncryptionProperties(Authentication auth) {
+        Optional<User> userOpt = userService.findUserByEmail(auth.getName());
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("Could not find user with email: " + auth.getName());
+        }
+
+        return new EncryptionPropertiesDTO(userOpt.get().getEncryptedDek(), userOpt.get().getSalt(), userOpt.get().getIv());
+    }
 
     @GetMapping("hello")
     public GenericResponseDTO hello() {

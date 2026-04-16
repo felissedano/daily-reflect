@@ -74,7 +74,10 @@ public class AuthIntegrationTest {
                         {
                           "email": "john@example.com",
                           "username": "john",
-                          "password": "password"
+                          "password": "password",
+                          "encryptedDek": "dek",
+                          "salt": "salt",
+                          "iv": "iv"
                         }
                         """)
                 .when()
@@ -95,7 +98,10 @@ public class AuthIntegrationTest {
                         {
                           "email": "john@example.com",
                           "username": "john",
-                          "password": "password"
+                          "password": "password",
+                          "encryptedDek": "dek",
+                          "salt": "salt",
+                          "iv": "iv"
                         }
                         """)
                 .when()
@@ -128,7 +134,7 @@ public class AuthIntegrationTest {
     public void whenUserLoginWithCorrectCredentialsButUnverified_shouldShowForbidden() {
         String xsrfToken = getXsrfToken();
 
-        userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password"));
+        userService.registerNormalUser(new UserDto("jane@example.com", "jane", "password", "dek", "salt", "iv"));
 
         given().contentType(ContentType.JSON)
                 .header(new Header("X-XSRF-TOKEN", xsrfToken))
@@ -151,7 +157,7 @@ public class AuthIntegrationTest {
     public void whenUserVerifyEmailWithCorrectCodeButDoItAgain_shouldSucceedAndThenFail() {
         String xsrfToken = getXsrfToken();
 
-        User user = userService.registerNormalUser(new UserDto("joe@example.com", "joe1", "password"));
+        User user = userService.registerNormalUser(new UserDto("joe@example.com", "joe1", "password", "dek", "salt", "iv"));
         String code = user.getVerificationCode();
         given().header(new Header("X-XSRF-TOKEN", xsrfToken))
                 .cookie("XSRF-TOKEN", xsrfToken)
@@ -175,7 +181,7 @@ public class AuthIntegrationTest {
     public void whenUserVerifyEmailWithIncorrectCode_shouldFail() {
         String xsrfToken = getXsrfToken();
 
-        User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password"));
+        User user = userService.registerNormalUser(new UserDto("eve@example.com", "eve1", "password", "dek", "salt", "iv"));
         String code = user.getVerificationCode();
         given().header(new Header("X-XSRF-TOKEN", xsrfToken))
                 .cookie("XSRF-TOKEN", xsrfToken)
@@ -192,7 +198,7 @@ public class AuthIntegrationTest {
     public void whenUserVerifyEmailWithIncorrectCodeWithLocale_shouldFailWithLocalResponse() {
         String xsrfToken = getXsrfToken();
 
-        User user = userService.registerNormalUser(new UserDto("bob@example.com", "bob1", "password"));
+        User user = userService.registerNormalUser(new UserDto("bob@example.com", "bob1", "password", "dek", "salt", "iv"));
         String code = user.getVerificationCode();
         given().header(new Header("Accept-Language", "fr"))
                 .header(new Header("X-XSRF-TOKEN", xsrfToken))
@@ -218,7 +224,10 @@ public class AuthIntegrationTest {
                         {
                             "email": "alice@example.com",
                             "username": "alice",
-                            "password": "password"
+                            "password": "password",
+                            "encryptedDek": "dek",
+                            "salt": "salt",
+                            "iv": "iv"
                         }
                         """)
                 .when()

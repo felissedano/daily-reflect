@@ -7,11 +7,11 @@ import java.util.Optional;
 
 public interface JournalService {
 
-    public void createOrUpdateJournal(JournalDto journalDto, String userEmail);
+    void createOrUpdateJournal(JournalDto journalDto, String userEmail);
 
-    public Optional<JournalDto> getJournalDto(LocalDate date, String userEmail);
+    Optional<JournalDto> getJournalDto(LocalDate date, String userEmail);
 
-    public void deleteJournal(LocalDate date, String userEmail);
+    void deleteJournal(LocalDate date, String userEmail);
 
-    public List<JournalDto> getJournalsByYearMonth(YearMonth yearMonth, String userEmail);
+    List<JournalDto> getJournalsByYearMonth(YearMonth yearMonth, String userEmail);
 }

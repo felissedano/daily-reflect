@@ -29,6 +29,9 @@ public class Journal {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 
+    @Column(name = "iv")
+    private String iv;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -79,6 +82,14 @@ public class Journal {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getIv() {
+        return iv;
+    }
+
+    public void setIv(String iv) {
+        this.iv = iv;
     }
 
     @Override

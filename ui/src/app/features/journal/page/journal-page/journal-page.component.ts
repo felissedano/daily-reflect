@@ -10,11 +10,10 @@ import { CalendarPopupComponent } from '../../calendar-popup/calendar-popup.comp
 import { ActivatedRoute, Router } from '@angular/router';
 import { JournalService } from '../../journal.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { JournalDto } from '../../journal.model';
+import { Journal } from '../../journal.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   checkIsValidDate,
-  stringfyDate,
 } from '../../../../shared/util/dateUtil';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -143,10 +142,10 @@ export class JournalPageComponent implements OnInit {
   }
 
   saveJournal() {
-    const journalToSave: JournalDto = {
+    const journalToSave: Journal = {
       content: this.journalForm.value.content ?? '',
       tags: this.journalForm.value.tags ?? [],
-      date: stringfyDate(this.currentSelectedDate),
+      date: this.currentSelectedDate,
     };
     this.journalService.saveJournal(journalToSave).subscribe({
       next: (_) =>

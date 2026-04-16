@@ -1,21 +1,29 @@
 # daily-reflect
 
-An online daily journaling web app that allows user to record memorable moments of the day, self-reflection, goal for the next day etc. Contains full localization support (French and English). 
+An online daily journaling web app with Client Side Encryption that allows user to record memorable moments of the day, self-reflection, goal for the next day etc. Contains full localization support (French and English). 
 
-Includes full authentication support
+Includes full authentication support:
 - Login
 - Account registration
 - Email verification
-- Password reset
+
+Client Side Encryption enabled by default:
+- Data Encryption Key (DEK) generated on the frontend side and encrypted using user password derived key before being store in the database
+- The DEK is retrieved upon successful user login and decrypted on the frontend side.
+- Every journal and tags are encrypted using the DEK before it ever leaves the frontend. Server never sees the plain text data at any point.
+- Upon password change, the DEK is re-encrypted using the new password derived key, ensure the data integrity is preserved for older journals. (WIP)
+
 
 *Bonus feature*: 100% human-made. The main purpose of this project is to explore the best practices of software engineering. Throughout the development, tons of research was made about the software design/architecture, coding best practices, CI, internationalization, and most importantly security (as I am really interested in cyber security). Also, different code editors were used throughout the development (IntelliJ, Neovim, VSCodium, Eclipse, Zed) to explore their differences.
 
 
 
 ## Some screenshots:
-![Alt text](resource/daily-reflect-demo-login.png "login-page")
+![Login page](resource/daily-reflect-demo-login.png "login-page")
 
-![Alt text](resource/daily-reflect-demo-journal.png?raw=true "journal-page")
+![Journal page](resource/daily-reflect-demo-journal.png?raw=true "journal-page")
+
+![Client side encryption demo](resource/daily-reflect-demo-encryption.png "client-side-encryption")
 
 More screenshots of the app can be found in [resource](resource) folder
 
