@@ -74,7 +74,10 @@ public class AuthIntegrationTest {
                         {
                           "email": "john@example.com",
                           "username": "john",
-                          "password": "password"
+                          "password": "password",
+                          "encryptedDek": "dek",
+                          "salt": "salt",
+                          "iv": "iv"
                         }
                         """)
                 .when()
@@ -95,7 +98,10 @@ public class AuthIntegrationTest {
                         {
                           "email": "john@example.com",
                           "username": "john",
-                          "password": "password"
+                          "password": "password",
+                          "encryptedDek": "dek",
+                          "salt": "salt",
+                          "iv": "iv"
                         }
                         """)
                 .when()
@@ -218,7 +224,10 @@ public class AuthIntegrationTest {
                         {
                             "email": "alice@example.com",
                             "username": "alice",
-                            "password": "password"
+                            "password": "password",
+                            "encryptedDek": "dek",
+                            "salt": "salt",
+                            "iv": "iv"
                         }
                         """)
                 .when()
